@@ -100,7 +100,7 @@ def Dijkstra(graph, source, dest): #added adj list parameter, deleted time varia
         i += 1
     
   # Return the time to the destination
-  return timeTillPoint[dest] #this would return distance from given source param to dest param
+  return timeTillPoint[destNode] #this would return distance from given source param to dest param
   
   #return sourceNode, destNode
   
