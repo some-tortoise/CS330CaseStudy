@@ -139,9 +139,7 @@ def createAdjacencyList(type, hour):
   else:
     raise TypeError
   
-  print('hi')
   for edge in edges:
-      print(edge)
       speed = float(edge[speedIndex])
       length = float(edge[2])
       weight = length/speed
@@ -159,7 +157,7 @@ def createAdjacencyList(type, hour):
 
 driversHeader, drivers = read_csv('./data/drivers.csv')
 passengersHeader, passengers = read_csv('./data/passengers.csv')
-edgesHeader, edges = read_csv('./data/passengers.csv')
+edgesHeader, edges = read_csv('./data/edges.csv')
 edges.sort(key=lambda edge: edge[0])
 
 #GLOBAL ELEMENTS
@@ -168,12 +166,10 @@ nodes = getNodes()
 # each element in below is for hours from 0-23
 adjacencyListsWeekdays = [0]*24 
 adjacencyListsWeekends = [0]*24 
-for edge in edges:
-  print(edge)
-# for i in range(0,23):
-#   adjacencyListsWeekdays[i] = createAdjacencyList('weekday', i)
-#  adjacencyListsWeekends[i] = createAdjacencyList('weekend', i)
 
+for i in range(0,23):
+  adjacencyListsWeekdays[i] = createAdjacencyList('weekday', i)
+  adjacencyListsWeekends[i] = createAdjacencyList('weekend', i)
 
 # RUN CODE
 #ret = t1(drivers, passengers)
