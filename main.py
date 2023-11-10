@@ -2,6 +2,7 @@ import csv
 from datetime import datetime
 import json
 import math
+import heapq
 
 def read_csv(str):
   file = open(str)
@@ -61,7 +62,7 @@ def findClosestNode(point):
 
 
 
-def Djikstra(source, dest, time):
+def Dijkstra(graph, source, dest): #added adj list parameter, deleted time variable from parameters
   '''
   Input:
   source as (lat, long)
@@ -73,11 +74,35 @@ def Djikstra(source, dest, time):
   sourceNode = findClosestNode(source)
   destNode = findClosestNode(dest)
 
-  #Run Djikstra
-  timeTillPoint = []
+  # Initialize distances dictionary with infinity for all vertices except the source
+  timeTillPoint = {vertex: float('infinity') for vertex in graph}
+  timeTillPoint[sourceNode] = 0
+  i = 0
 
+  priority_queue = [(0, source)]
 
-  return sourceNode, destNode
+  while priority_queue:
+        current_distance, current_vertex = heapq.heappop(priority_queue)
+        
+        # If the current distance is greater than the known distance, skip
+        if current_distance > timeTillPoint[current_vertex]:
+            continue
+        
+        # Iterate over neighbors of the current vertex
+        for neighbor, weight in graph[current_vertex].items():
+            distance = current_distance + weight
+            
+            # If a shorter path is found, update the distance
+            if distance < timeTillPoint[neighbor]:
+                timeTillPoint[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+        
+        i += 1
+    
+  # Return the time to the destination
+  return timeTillPoint[dest] #this would return distance from given source param to dest param
+  
+  #return sourceNode, destNode
   
 
 def t1(passengers, drivers):
@@ -94,14 +119,14 @@ def t1(passengers, drivers):
   while True:
     passengerDate = datetime.strptime(passengers[0][0], "%m/%d/%Y %H:%M:%S")
     driverDate = datetime.strptime(drivers[0][0], "%m/%d/%Y %H:%M:%S")
-    if passengerDate < driverDate:
+    if passengerDate < driverDate: #if passenger is from previous day, remove from passengers
       passenger = passengers.pop(0)
-      waitingPassengerQueue.append(passenger)
+      waitingPassengerQueue.append(passenger) #add passenger to queue
       if(len(passengers) == 0):
         print('Ran Out of Passengers')
         break
     else:
-      driver = drivers.pop(0)
+      driver = drivers.pop(0) 
       waitingDriverQueue.append(driver)
       if(len(drivers) == 0):
         print('Ran Out of Drivers')
@@ -118,7 +143,7 @@ def t1(passengers, drivers):
       #   totalTime = timeFromDriverToPassenger + timeFromPassengerToDest
       #   print(f'Total time: {totalTime}')
         
-      print(Djikstra((driver[1], driver[2]), (passenger[1], passenger[2])))
+      print(Dijkstra((driver[1], passenger[1]), (driver[2], passenger[2]))) #changed driver and passenger pairings
 
 
 def createAdjacencyList(type, hour):
@@ -171,7 +196,7 @@ adjacencyListsWeekends = [0]*24
 for edge in edges:
   print(edge)
 # for i in range(0,23):
-#   adjacencyListsWeekdays[i] = createAdjacencyList('weekday', i)
+#  adjacencyListsWeekdays[i] = createAdjacencyList('weekday', i)
 #  adjacencyListsWeekends[i] = createAdjacencyList('weekend', i)
 
 
