@@ -88,9 +88,9 @@ def Dijkstra(graph, source, dest): #added adj list parameter, deleted time varia
             continue
         #print(graph.get(current_vertex))
         # Iterate over neighbors of the current vertex
-        print(priority_queue)
-        print(f'ad: {current_vertex}')
-        print(f'b: {graph[current_vertex]}')
+        #print(priority_queue)
+        #print(f'ad: {current_vertex}')
+        #print(f'b: {graph[current_vertex]}')
         for neighbor, weight in graph[current_vertex]:
             distance = current_distance + weight
             
@@ -226,10 +226,15 @@ def createAdjacencyListAsDict(type, hour):
       speed = float(edge[speedIndex])
       length = float(edge[2])
       weight = length/speed
+     # if adjacencyList.get(edge[0]):
+     #   adjacencyList.update({edge[0] : adjacencyList.get(edge[0]).append((edge[1], weight))})
+     # else:
+     #   adjacencyList.update({edge[0] : [(edge[1], weight)]})
       if adjacencyList.get(edge[0]):
-        adjacencyList.update({edge[0] : adjacencyList.get(edge[0]).append((edge[1], weight))})
+        adjacencyList[edge[0]].append((edge[1], weight))
       else:
-        adjacencyList.update({edge[0] : [(edge[1], weight)]})
+        adjacencyList.update({edge[0]: [(edge[1], weight)]})
+
 
   return adjacencyList
   
