@@ -3,136 +3,26 @@ from datetime import datetime
 import json
 import math
 import heapq
+import time
+import statistics
 
-def read_csv(str):
-  file = open(str)
-  csvreader = csv.reader(file)
-  header = []
-  header = next(csvreader)
-  rows = []
-  for row in csvreader:
-    rows.append(row)
-  file.close()
-  return header, rows
-
-def print_csv(header, rows):
-  print(header)
-  print('----------------------------------------------')
-  for row  in rows:
-    print(row)
-
-def getNodes():
-  f = open('./data/node_data.json')
-  data = json.load(f)
-  f.close()
-  return data
-
-def findDist(point1, point2):
-  '''
-  returns estimate of distance between two points
-
-  Input
-  point1 as (lat1, long1), point2 as (lat2, long2)
-  '''
-  lat1, long1 = point1
-  lat2, long2 = point2
-  return math.sqrt((float(lat1)-float(lat2))**2 + (float(long1)-float(long2))**2)
-
-
-def findClosestNode(point):
-  '''
-  Input:
-  point as (lat, long)
-
-  Output:
-  returns a node ID
-  '''
-
-  minDist = float('Inf')
-  closestNode = None
-  for node in nodes:
-    nodeLong = nodes[node]['lon']
-    nodeLat = nodes[node]['lat']
-    dist = findDist((point), (nodeLat, nodeLong))
-    if dist < minDist:
-      minDist = dist
-      closestNode = node
-  
-  return closestNode
-
-
-
-def Dijkstra(graph, source, dest): #added adj list parameter, deleted time variable from parameters
-  '''
-  Input:
-  source as (lat, long)
-  dest as (lat, long)
-
-  Output:
-  returns time it takes to get from source to destination
-  '''
-  sourceNode = findClosestNode(source)
-  destNode = findClosestNode(dest)
-
-  # Initialize distances dictionary with infinity for all vertices except the source
-  timeTillPoint = {vertex: float('infinity') for vertex in graph}
-  timeTillPoint[sourceNode] = 0
-
-  priority_queue = [(sourceNode, 0)]
-
-  while priority_queue:
-        current_vertex, current_distance = heapq.heappop(priority_queue)
-        
-        # If the current distance is greater than the known distance, skip
-        if current_distance > timeTillPoint[current_vertex]:
-            continue
-        #print(graph.get(current_vertex))
-        # Iterate over neighbors of the current vertex
-        print(priority_queue)
-        print(f'ad: {current_vertex}')
-        print(f'b: {graph[current_vertex]}')
-        for neighbor, weight in graph[current_vertex]:
-            distance = current_distance + weight
-            
-            # If a shorter path is found, update the distance
-            if distance < timeTillPoint[neighbor]:
-                timeTillPoint[neighbor] = distance
-                print(f'c: {graph[neighbor]}')
-                heapq.heappush(priority_queue, (neighbor, distance))
-    
-  # Return the time to the destination
-  return timeTillPoint[destNode] #this would return distance from given source param to destNode
-  
-  #return sourceNode, destNode
-  
-def getAdjacencyList(dateStr):
-  '''
-  Input:
-  dateString
-  Output:
-  correct adjacencyList
-  '''
-  hour = int(dateStr.split()[1][0:2])
-  adjacencyList = 0
-  date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
-  if date.weekday() < 5:
-    adjacencyList = adjacencyListsWeekdays[hour]
-  else:
-    adjacencyList = adjacencyListsWeekends[hour]
-  
-  return adjacencyList
+###self defined files###
+import inOut #input output
+import algs #algorithms
+import util #utility functions
+ 
 
 def t1(passengers, drivers):
   '''
   input is passengers array and drivers array
   '''
-  # Sort passengers by time
-  passengers.sort(key=lambda passenger: datetime.strptime(passenger[0], "%m/%d/%Y %H:%M:%S"))
-  # Sort drivers by time
-  drivers.sort(key=lambda driver: datetime.strptime(driver[0], "%m/%d/%Y %H:%M:%S"))
+  startTimeForT1 = time.time()
+
   # combine into one list and iterate over list
   waitingPassengerQueue = []
   waitingDriverQueue = []
+  driveToPassengersTime = []
+  driveToDestTime = []
   while True:
     passengerDate = datetime.strptime(passengers[0][0], "%m/%d/%Y %H:%M:%S")
     driverDate = datetime.strptime(drivers[0][0], "%m/%d/%Y %H:%M:%S")
@@ -169,91 +59,65 @@ def t1(passengers, drivers):
         latestDate = passenger[0]
       
       adjacencyList = getAdjacencyList(latestDate)
-      
-      print(Dijkstra(adjacencyList, (driver[1], driver[2]), (passenger[1], passenger[2])))
 
 
-# def createAdjacencyListAsLinkedList(type, hour):
-#   '''
-#   Input:
-#   type can either be 'weekday' or 'weekend'
-#   hour is integer from [0,23]
+      timeFromDriverToPassenger = Dijkstra(adjacencyList, (driver[1], driver[2]), (passenger[1], passenger[2]))
+      timeFromPassengerToDest = Dijkstra(adjacencyList, (passenger[1], passenger[2]), (passenger[3], passenger[4]))
+      totalTime = timeFromDriverToPassenger + timeFromPassengerToDest
+      driveToPassengersTime.append(timeFromDriverToPassenger)
+      driveToDestTime.append(timeFromPassengerToDest)
+      print(totalTime)
 
-#   Output: 
-#   adjacency list
-#   '''
-#   adjacencyList = []
-
-#   if(type == 'weekday'):
-#     speedIndex = 3+hour #look at column 3+i for weights
-#   elif(type == 'weekend'):
-#     speedIndex = 27+hour #look at column 27+i for weights
-#   else:
-#     raise TypeError
+  #get diagnostics info at the end of the test
+  endTimeForT1 = time.time()
   
+  timeForTest = (startTimeForT1 - endTimeForT1)
 
-#   for edge in edges:
-#       speed = float(edge[speedIndex])
-#       length = float(edge[2])
-#       weight = length/speed
-#       if len(adjacencyList) == 0 or adjacencyList[-1][0] != edge[0]:
-#         adjacencyList.append([edge[0],(edge[1], weight)]) # [sourceNode, (destNode, weight)]
-#       else:
-#         adjacencyList[-1].append((edge[1], weight)) # (destNode, weight)
+  sumOfToPassengersTime = 0
+  sumOfToDestTime = 0
+  sumOfdriverProfit = 0
+  for t in range(0,driveToPassengersTime):
+    sumOfToPassengersTime += driveToPassengersTime[t]
+    sumOfToDestTime += driveToDestTime[t]
+    sumOfdriverProfit += driveToDestTime[t] - driveToPassengersTime[t]
+  avgOfToPassengersTime = sumOfToPassengersTime / len(driveToPassengersTime)
+  avgOfToDestTime = sumOfToDestTime / len(driveToPassengersTime)
+  avgOfDriverProfit = sumOfdriverProfit / len(driveToPassengersTime)
 
-#   return adjacencyList
-
-
-def createAdjacencyListAsDict(type, hour):
-  '''
-  Input:
-  type can either be 'weekday' or 'weekend'
-  hour is integer from [0,23]
-
-  Output: 
-  adjacency list
-  '''
-  adjacencyList = {}
-
-  if(type == 'weekday'):
-    speedIndex = 3+hour #look at column 3+i for weights
-  elif(type == 'weekend'):
-    speedIndex = 27+hour #look at column 27+i for weights
-  else:
-    raise TypeError
-  
-  for edge in edges:
-      speed = float(edge[speedIndex])
-      length = float(edge[2])
-      weight = length/speed
-      if adjacencyList.get(edge[0]):
-        adjacencyList.update({edge[0] : adjacencyList.get(edge[0]).append((edge[1], weight))})
-      else:
-        adjacencyList.update({edge[0] : [(edge[1], weight)]})
-
-  return adjacencyList
-  
-
+  #print diagnostics info at the end of the test
+  print('------------INFO------------')
+  print(f'Average time to reach a passenger: {statistics.mean(driveToPassengersTime)}')
+  print(f'Standard deviation of time to reach passenger: {statistics.stdev(driveToPassengersTime)}')
+  print(f'Average time from pickup to dropoff: {statistics.mean(driveToDestTime)}')
+  print(f'Average unmatched till dest (time to reach passenger + time to dropoff): {statistics.mean(driveToPassengersTime) + statistics.mean(driveToDestTime)}')
+  print(f'Average driver profit: {avgOfDriverProfit}')
+  print(f'Time for entire test: {timeForTest}')
 
 
 # READ IN DATA
 
-driversHeader, drivers = read_csv('./data/drivers.csv')
-passengersHeader, passengers = read_csv('./data/passengers.csv')
-edgesHeader, edges = read_csv('./data/edges.csv')
-edges.sort(key=lambda edge: edge[0])
+# driversHeader, drivers = read_csv('./data/drivers.csv')
+# passengersHeader, passengers = read_csv('./data/passengers.csv')
 
-#GLOBAL ELEMENTS
+# edgesHeader, edges = read_csv('./data/edges.csv')
+# edges.sort(key=lambda edge: edge[0])
+
+# #GLOBAL ELEMENTS
 
 nodes = getNodes()
-# each element in below is for hours from 0-23
-adjacencyListsWeekdays = [0]*24 
-adjacencyListsWeekends = [0]*24 
+# Sort passengers by time
+passengers.sort(key=lambda passenger: datetime.strptime(passenger[0], "%m/%d/%Y %H:%M:%S"))
+  
+# Sort drivers by time
+drivers.sort(key=lambda driver: datetime.strptime(driver[0], "%m/%d/%Y %H:%M:%S"))
+# # each element in below is for hours from 0-23
+# adjacencyListsWeekdays = [0]*24 
+# adjacencyListsWeekends = [0]*24 
 
-for i in range(0,23):
-  adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
-  adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
+# for i in range(0,23):
+#   adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
+#   adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
 
-# RUN CODE
-ret = t1(drivers, passengers)
-#print(ret)
+# # RUN CODE
+# ret = t1(passengers, drivers)
+# print(ret)
