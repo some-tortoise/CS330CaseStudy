@@ -1,20 +1,11 @@
 import math
+import random
 from datetime import datetime
 
 from util import *
 import global_data
 
-# def findDist(point1, point2):
-#   '''
-#   returns estimate of distance between two points
-
-#   Input
-#   point1 as (lat1, long1), point2 as (lat2, long2)
-#   '''
-#   lat1, long1 = point1
-#   lat2, long2 = point2
-#   return math.sqrt((float(lat1)-float(lat2))**2 + (float(long1)-float(long2))**2)
-
+#I BELIEVE IT IS GETTING THE DISTANCE IN MILES??? NOT SURE
 def getHaversineDist(point1, point2):
   '''
   returns estimate of distance between two points
@@ -55,9 +46,32 @@ def findClosestNode(point):
     if dist < minDist:
       minDist = dist
       closestNode = node
-  
+
   return closestNode
 
+def addNodeToGraphIfNeeded(point):
+  '''
+  Input (lat, long)
+  Output: node created or closest node if new one not needed
+  '''
+  node = findClosestNode(point)
+  nodeLong = global_data.nodes[node]['lon']
+  nodeLat = global_data.nodes[node]['lat']
+  dist = getHaversineDist((nodeLat, nodeLong), point)
+  if dist > global_data.minDistToBecomeNewNode:
+    #create new node
+    nodeId = random.getrandbits(64)
+    global_data.nodes.append({nodeId:{'lon': point[0], 'lat' : point[1]}})
+    global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
+    for i in range(0, len(global_data.adjacencyListsWeekdays)):
+      temp = global_data.adjacencyListsWeekdays[i][node]
+      temp.append((nodeId, dist/10))
+      global_data.adjacencyListsWeekdays[i].update({node : temp})
+      global_data.adjacencyListsWeekdays[i].update({nodeId : [node, dist/10]})
+    
+    return nodeId
+  
+  return node
 
 def getAdjacencyList(dateStr):
   '''
@@ -108,7 +122,7 @@ def getAdjacencyList(dateStr):
   return adjacencyList
 
 
-def createAdjacencyListAsDict(type, hour, edges):
+def createAdjacencyListAsDict(type, hour):
   '''
   Input:
   type can either be 'weekday' or 'weekend'
@@ -126,7 +140,7 @@ def createAdjacencyListAsDict(type, hour, edges):
   else:
     raise TypeError
   
-  for edge in edges:
+  for edge in global_data.edges:
       speed = float(edge[speedIndex])
       length = float(edge[2])
       weight = length/speed

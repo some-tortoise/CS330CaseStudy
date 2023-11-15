@@ -21,10 +21,10 @@ time1 = time.time()
 
 drivers = read_csv('./data/drivers.csv')
 passengers = read_csv('./data/passengers.csv')
-edges = read_csv('./data/edges.csv')
+global_data.edges = read_csv('./data/edges.csv')
 global_data.nodes = getNodes() # list of nodes
 
-edges.sort(key=lambda edge: edge[0])
+#global_data.edges.sort(key=lambda edge: edge[0])
 
 
 time2 = time.time()
@@ -39,8 +39,8 @@ print(f'time to read data: {time2 - time1} seconds')
 # each element in below is for hours from 0-23
 
 for i in range(0,23):
-  global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i, edges)
-  global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i, edges)
+  global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
+  global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
 
 time3 = time.time()
 print(f'time for preprocessing: {time3 - time2} seconds')

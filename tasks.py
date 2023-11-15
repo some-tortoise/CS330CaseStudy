@@ -58,13 +58,19 @@ def t1(passengersList, driversList):
       driverDate = datetime.strptime(driver.datetime, "%m/%d/%Y %H:%M:%S")
 
       latestDate = driver.datetime if passengerDate < driverDate else passenger.datetime
+      adjacencyList = getAdjacencyList(latestDate)
+      
       
       #calculating route details
-      adjacencyList = getAdjacencyList(latestDate)
-      ### WE ALSO NEED TO ADD A NODE TO THE GRAPH WHEN/IF NECESSARY
+
+      driverNode = addNodeToGraphIfNeeded((driver.lat, driver.long))
+      passengerNode = addNodeToGraphIfNeeded((passenger.sourceLat, passenger.sourceLong))
+      destNode = addNodeToGraphIfNeeded((passenger.destLat, passenger.destLong))
+
       driverNode = findClosestNode((driver.lat, driver.long))
       passengerNode = findClosestNode((passenger.sourceLat, passenger.sourceLong))
       destNode = findClosestNode((passenger.destLat, passenger.destLong))
+
       timeFromDriverToPassenger = Dijkstra(adjacencyList, driverNode, passengerNode)*60
       timeFromPassengerToDest = Dijkstra(adjacencyList, passengerNode, destNode)*60
       totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
