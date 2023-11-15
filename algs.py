@@ -1,17 +1,16 @@
 import heapq
-from inOut import findClosestNode
 
-def Dijkstra(graph, source, dest): #added adj list parameter, deleted time variable from parameters
+from util import *
+
+def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
   '''
   Input:
-  source as (lat, long)
-  dest as (lat, long)
+  source as node
+  dest as node
 
   Output:
   returns time it takes to get from source to destination
   '''
-  sourceNode = findClosestNode(source)
-  destNode = findClosestNode(dest)
 
   # Initialize distances dictionary with infinity for all vertices except the source
   timeTillPoint = {vertex: float('infinity') for vertex in graph}
@@ -21,7 +20,6 @@ def Dijkstra(graph, source, dest): #added adj list parameter, deleted time varia
 
   while priority_queue:
         current_vertex, current_distance = heapq.heappop(priority_queue)
-        
         # If the current distance is greater than the known distance, skip
         if current_distance > timeTillPoint[current_vertex]:
             continue

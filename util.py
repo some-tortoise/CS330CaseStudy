@@ -1,4 +1,8 @@
 import math
+from datetime import datetime
+
+from util import *
+import global_data
 
 # def findDist(point1, point2):
 #   '''
@@ -23,7 +27,7 @@ def getHaversineDist(point1, point2):
   lat2, lon2 = point2
   
   # convert decimal degrees to radians 
-  lon1, lat1, lon2, lat2 = map(math.radians, [lon1, lat1, lon2, lat2])
+  lon1, lat1, lon2, lat2 = map(math.radians, [float(lon1), float(lat1), float(lon2), float(lat2)])
   
   # haversine formula 
   dlon = lon2 - lon1 
@@ -44,10 +48,10 @@ def findClosestNode(point):
 
   minDist = float('Inf')
   closestNode = None
-  for node in nodes:
-    nodeLong = nodes[node]['lon']
-    nodeLat = nodes[node]['lat']
-    dist = getHaversineDist((point), (nodeLat, nodeLong))
+  for node in global_data.nodes:
+    nodeLong = global_data.nodes[node]['lon']
+    nodeLat = global_data.nodes[node]['lat']
+    dist = getHaversineDist(point, (nodeLat, nodeLong))
     if dist < minDist:
       minDist = dist
       closestNode = node
@@ -66,9 +70,9 @@ def getAdjacencyList(dateStr):
   adjacencyList = 0
   date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
   if date.weekday() < 5:
-    adjacencyList = adjacencyListsWeekdays[hour]
+    adjacencyList = global_data.adjacencyListsWeekdays[hour]
   else:
-    adjacencyList = adjacencyListsWeekends[hour]
+    adjacencyList = global_data.adjacencyListsWeekends[hour]
   
   return adjacencyList
 
@@ -104,7 +108,7 @@ def getAdjacencyList(dateStr):
   return adjacencyList
 
 
-def createAdjacencyListAsDict(type, hour):
+def createAdjacencyListAsDict(type, hour, edges):
   '''
   Input:
   type can either be 'weekday' or 'weekend'

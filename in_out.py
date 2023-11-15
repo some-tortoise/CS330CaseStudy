@@ -14,11 +14,9 @@ def read_csv(str):
   for row in csvreader:
     rows.append(row)
   file.close()
-  return header, rows
+  return rows
 
-def print_csv(header, rows):
-  print(header)
-  print('----------------------------------------------')
+def print_csv(rows):
   for row  in rows:
     print(row)
 
