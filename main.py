@@ -10,7 +10,7 @@ import statistics
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1 #utility functions
+from tasks import t1, t2, t3, t4 #utility functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -38,16 +38,23 @@ print(f'time to read data: {time2 - time1} seconds')
 ### PREPROCESSING ###
 # each element in below is for hours from 0-23
 
-for i in range(0,24):
-  global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
-  global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
+#createAdjacencyLists()
+
+initialNodeList = []
+for key, val in global_data.nodes.items():
+    initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
+
+global_data.nodesSortedByLat = sorted(initialNodeList, key=lambda x: x[1])
+global_data.nodesSortedByLong = sorted(initialNodeList, key=lambda x: x[2])
+
 
 time3 = time.time()
 print(f'time for preprocessing: {time3 - time2} seconds')
-
 ### RUN TASK ###
 
-t1()
+ret = findClosestNodeButCoolerAndFasterAndSexier((40.655156, -73.933676))
+print(f'ret: {ret}')
+#t1()
 
 time4 = time.time()
 print(f'time to complete task: {time4 - time3} seconds')

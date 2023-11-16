@@ -1,4 +1,6 @@
 nodes = []
+nodesSortedByLat = []
+nodesSortedByLong = []
 edges = []
 passengers = []
 drivers = []

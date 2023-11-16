@@ -2,14 +2,13 @@ import math
 import random
 from datetime import datetime
 
-from util import *
 import global_data
 from classes import Passenger, Driver
 
-#I BELIEVE IT IS GETTING THE DISTANCE IN MILES??? NOT SURE
+
 def getHaversineDist(point1, point2):
   '''
-  returns estimate of distance between two points
+  returns estimate of distance between two points in miles
 
   Input
   point1 as (lat1, long1), point2 as (lat2, long2)
@@ -181,11 +180,11 @@ def updateDriverDetails(driver, ride, latestDate):
   driver.passengersCarried += 1
   driver.driverProfit += ride.pickupToDropoffTime - ride.driverToPassengerTime
   if latestDate == driver.datetime:
-    driver.timeOnJob += driverDate.timestamp() / 60 + totalTimeInMin - driverDate.timestamp() / 60
+    driver.timeOnJob += totalTimeInMin
     driver.datetime = driverDate.timestamp() / 60 + totalTimeInMin
   else:
     passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
-    driver.timeOnJob += passengerDate.timestamp() / 60 + totalTimeInMin - driverDate.timestamp() / 60
+    driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
     driver.datetime = passengerDate.timestamp() / 60 + totalTimeInMin
   
   driver.datetime = datetime.fromtimestamp(driver.datetime*60, tz = None)
@@ -198,3 +197,91 @@ def updateDriverDetails(driver, ride, latestDate):
   driver.datetime = reformatted_date
 
   return driver
+
+def createAdjacencyLists():
+  for i in range(0,24):
+    global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
+    global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
+
+def findClosestNodeButCoolerAndFasterAndSexier(point):
+  '''
+  Input:
+  point as (lat, long)
+
+  Output:
+  returns a node ID
+  '''
+
+  minDist = float('Inf')
+  lat, long = point
+  closestNode = None
+  latLowBound = lat - 0.03
+  latHighBound = lat + 0.03
+  indexLat, valLat = BinarySearchRange([item[1] for item in global_data.nodesSortedByLat], latLowBound, latHighBound)
+
+  arrayOfNodesWithGoodLat = []
+  i = indexLat
+  while global_data.nodesSortedByLat[i][1]>=latLowBound and global_data.nodesSortedByLat[i][1]<=latHighBound:
+    arrayOfNodesWithGoodLat.append(global_data.nodesSortedByLat[i][0])
+    i+=1
+  i = indexLat-1
+  while global_data.nodesSortedByLat[i][1]>=latLowBound and global_data.nodesSortedByLat[i][1]<=latHighBound:
+    arrayOfNodesWithGoodLat.append(global_data.nodesSortedByLat[i][0])
+    i-=1
+
+
+  longLowBound = long - 0.03
+  longHighBound = long + 0.03
+  indexLong, valLong = BinarySearchRange([item[2] for item in global_data.nodesSortedByLong], longLowBound, longHighBound)
+
+  arrayOfNodesWithGoodLong = []
+  i = indexLong
+  while global_data.nodesSortedByLong[i][2]>=longLowBound and global_data.nodesSortedByLong[i][2]<=longHighBound:
+    arrayOfNodesWithGoodLong.append(global_data.nodesSortedByLong[i][0])
+    i+=1
+  i = indexLong-1
+  while global_data.nodesSortedByLong[i][2]>=longLowBound and global_data.nodesSortedByLong[i][2]<=longHighBound:
+    arrayOfNodesWithGoodLong.append(global_data.nodesSortedByLong[i][0])
+    i-=1
+  
+  #get intersection
+  possibleNodes = []
+  for a  in arrayOfNodesWithGoodLat:
+    if a in arrayOfNodesWithGoodLong:
+      possibleNodes.append(a)
+  
+  #loop through
+  minDist = float('Inf')
+  closestNode = None
+  for node in possibleNodes:
+    nodeLong = global_data.nodes[node]['lon']
+    nodeLat = global_data.nodes[node]['lat']
+    dist = getHaversineDist(point, (nodeLat, nodeLong))
+    if dist < minDist:
+      minDist = dist
+      closestNode = node
+
+  return closestNode
+
+
+def BinarySearchRange(list, a, b):
+    '''
+    Input:
+    list and lower bound a and upper bound b
+    '''
+
+    n = len(list)
+    if(n == 1):
+        if float(list[0]) >= a and float(list[0]) <= b:
+            return list[0]
+        else:
+            return None
+    
+    m = math.floor(n/2)
+    mid = list[m]
+    if float(mid)>b:
+        return BinarySearchRange(list[:m],a,b)
+    elif float(mid)<a:
+        return BinarySearchRange(list[m:],a,b)
+    
+    return m,mid
