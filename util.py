@@ -263,7 +263,6 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
 
   return closestNode
 
-
 def BinarySearchRange(list, a, b):
     '''
     Input:
@@ -285,3 +284,4 @@ def BinarySearchRange(list, a, b):
         return BinarySearchRange(list[m:],a,b)
     
     return m,mid
+
