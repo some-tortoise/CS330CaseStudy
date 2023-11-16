@@ -1,5 +1,7 @@
 nodes = []
 edges = []
+passengers = []
+drivers = []
 adjacencyListsWeekdays = [0]*24 
 adjacencyListsWeekends = [0]*24 
 

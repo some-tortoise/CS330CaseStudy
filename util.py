@@ -4,6 +4,7 @@ from datetime import datetime
 
 from util import *
 import global_data
+from classes import Passenger, Driver
 
 #I BELIEVE IT IS GETTING THE DISTANCE IN MILES??? NOT SURE
 def getHaversineDist(point1, point2):
@@ -60,14 +61,14 @@ def addNodeToGraphIfNeeded(point):
   dist = getHaversineDist((nodeLat, nodeLong), point)
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
-    nodeId = random.getrandbits(64)
-    global_data.nodes.append({nodeId:{'lon': point[0], 'lat' : point[1]}})
-    global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
-    for i in range(0, len(global_data.adjacencyListsWeekdays)):
-      temp = global_data.adjacencyListsWeekdays[i][node]
-      temp.append((nodeId, dist/10))
-      global_data.adjacencyListsWeekdays[i].update({node : temp})
-      global_data.adjacencyListsWeekdays[i].update({nodeId : [node, dist/10]})
+    nodeId = random.getrandbits(32)
+    global_data.nodes.update({nodeId:{'lon': point[0], 'lat' : point[1]}})
+    #global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
+    for i in range(0, 24):
+      temp = global_data.adjacencyListsWeekdays[i].get(str(node))
+      temp.append((str(nodeId), dist/10))
+      global_data.adjacencyListsWeekdays[i].update({str(node) : temp})
+      global_data.adjacencyListsWeekdays[i].update({str(nodeId) : [(str(node), dist/10)]})
     
     return nodeId
   
@@ -121,7 +122,6 @@ def getAdjacencyList(dateStr):
 
   return adjacencyList
 
-
 def createAdjacencyListAsDict(type, hour):
   '''
   Input:
@@ -153,4 +153,23 @@ def createAdjacencyListAsDict(type, hour):
         adjacencyList.update({edge[0] : [(edge[1], weight)]})
 
   return adjacencyList
-  
+
+def getPassengersWithShortDate(date):
+  l = []
+  passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
+  while(passengerDate == date):
+    passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
+    passenger = global_data.passengers.pop(0)
+    p = Passenger(*passenger, 0)
+    l.append(p)
+  return l  
+
+def getDriversWithShortDate(date):
+  l = []
+  driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
+  while(driverDate == date):
+    driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
+    driver = global_data.drivers.pop(0)
+    d = Driver(*driver, 0, 0, 0)
+    l.append(d)
+  return l  
