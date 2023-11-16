@@ -169,8 +169,12 @@ def t3():
       minPairwiseDist = float('inf')
       for p in waitingPassengerList:
         for d in waitingDriverList:
-          driverNode = grabOrCreateNode((driver.lat, driver.long))
-          passengerNode = grabOrCreateNode((passenger.sourceLat, passenger.sourceLong))
+          passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
+          driverDate = datetime.strptime(d.datetime, "%m/%d/%Y %H:%M:%S")
+          latestDate = d.datetime if passengerDate < driverDate else p.datetime
+          adjacencyList = getAdjacencyList(latestDate)
+          driverNode = grabOrCreateNode((d.lat, d.long))
+          passengerNode = grabOrCreateNode((p.sourceLat, p.sourceLong))
           dist = Dijkstra(adjacencyList, driverNode, passengerNode)*60
           if(dist < minPairwiseDist):
             pR = p

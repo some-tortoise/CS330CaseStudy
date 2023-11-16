@@ -39,25 +39,3 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
   
   #return sourceNode, destNode
-
-# def BinarySearchRange(list, a, b):
-#     '''
-#     Input:
-#     list and lower bound a and upper bound b
-#     '''
-
-#     n = len(list)
-#     if(n == 1):
-#         if f(list[0]):
-#             return list[0]
-#         else:
-#             return None
-    
-#     m = math.floor(n/2)
-#     mid = list[math.floor(n/2)]
-#     if mid>b:
-#         return BinarySearchRange(list[:m])
-#     elif mid:
-#         return BinarySearchRange(list[m:])
-    
-#     return mid

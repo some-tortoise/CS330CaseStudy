@@ -38,7 +38,7 @@ print(f'time to read data: {time2 - time1} seconds')
 ### PREPROCESSING ###
 # each element in below is for hours from 0-23
 
-#createAdjacencyLists()
+createAdjacencyLists()
 
 initialNodeList = []
 for key, val in global_data.nodes.items():
@@ -52,9 +52,7 @@ time3 = time.time()
 print(f'time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
-ret = findClosestNodeButCoolerAndFasterAndSexier((40.655156, -73.933676))
-print(f'ret: {ret}')
-#t1()
+t3()
 
 time4 = time.time()
 print(f'time to complete task: {time4 - time3} seconds')
