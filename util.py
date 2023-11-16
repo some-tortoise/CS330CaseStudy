@@ -50,7 +50,7 @@ def findClosestNode(point):
 
   return closestNode
 
-def addNodeToGraphIfNeeded(point):
+def grabOrCreateNode(point):
   '''
   Input (lat, long)
   Output: node created or closest node if new one not needed
@@ -70,7 +70,7 @@ def addNodeToGraphIfNeeded(point):
       global_data.adjacencyListsWeekdays[i].update({str(node) : temp})
       global_data.adjacencyListsWeekdays[i].update({str(nodeId) : [(str(node), dist/10)]})
     
-    return nodeId
+    return str(nodeId)
   
   return node
 
@@ -172,4 +172,29 @@ def getDriversWithShortDate(date):
     driver = global_data.drivers.pop(0)
     d = Driver(*driver, 0, 0, 0)
     l.append(d)
-  return l  
+  return l 
+
+def updateDriverDetails(driver, ride, latestDate):
+  driverDate = datetime.strptime(driver.datetime, "%m/%d/%Y %H:%M:%S")
+  totalTimeInMin = ride.pickupToDropoffTime + ride.driverToPassengerTime
+
+  driver.passengersCarried += 1
+  driver.driverProfit += ride.pickupToDropoffTime - ride.driverToPassengerTime
+  if latestDate == driver.datetime:
+    driver.timeOnJob += driverDate.timestamp() / 60 + totalTimeInMin - driverDate.timestamp() / 60
+    driver.datetime = driverDate.timestamp() / 60 + totalTimeInMin
+  else:
+    passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
+    driver.timeOnJob += passengerDate.timestamp() / 60 + totalTimeInMin - driverDate.timestamp() / 60
+    driver.datetime = passengerDate.timestamp() / 60 + totalTimeInMin
+  
+  driver.datetime = datetime.fromtimestamp(driver.datetime*60, tz = None)
+  format_string = '%Y-%m-%d %H:%M:%S'
+  date_string = driver.datetime.strftime(format_string)
+  year,month,dayandrest = date_string.split('-')
+  day, rest = dayandrest.split(' ')
+
+  reformatted_date = f'{month}/{day}/{year} {rest}'
+  driver.datetime = reformatted_date
+
+  return driver

@@ -25,3 +25,11 @@ def getNodes():
   data = json.load(f)
   f.close()
   return data
+
+def printRideDetails(r):
+  print('---Ride---')
+  print(f'time from driver to passenger (minutes): {r.driverToPassengerTime}')
+  print(f'time from pick up to destination (minutes): {r.pickupToDropoffTime}')
+  print(f'total time of trip (minutes): {r.pickupToDropoffTime + r.driverToPassengerTime}')
+  print(f'passenger time from hailing a ride till reaching dest (minutes): {r.passengerWaitFromAvailableTillDest}')
+  print(f'driver profit: {r.pickupToDropoffTime - r.driverToPassengerTime}')
