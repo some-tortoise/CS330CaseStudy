@@ -24,8 +24,8 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   while priority_queue:
         current_vertex, current_distance = heapq.heappop(priority_queue)
 
-        if current_vertex in seen:
-            continue
+        #if current_vertex in seen:
+          #  continue
 
         seen.add(current_vertex)
 
