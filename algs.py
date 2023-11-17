@@ -39,7 +39,8 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
             # If a shorter path is found, update the distance
             if distance < timeTillPoint[neighbor]:
                 timeTillPoint[neighbor] = distance
-                heapq.heappush(priority_queue, (neighbor, distance))
+                if current_vertex not in seen:
+                    heapq.heappush(priority_queue, (neighbor, distance))
     
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
