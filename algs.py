@@ -19,9 +19,15 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   timeTillPoint[sourceNode] = 0
 
   priority_queue = [(sourceNode, 0)]
+  seen = set()
 
   while priority_queue:
         current_vertex, current_distance = heapq.heappop(priority_queue)
+
+        if current_vertex in seen:
+            continue
+
+        seen.add(current_vertex)
 
         if current_vertex == destNode:
             return timeTillPoint[destNode]
