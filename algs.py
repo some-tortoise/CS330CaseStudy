@@ -15,7 +15,9 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   '''
 
   # Initialize distances dictionary with infinity for all vertices except the source
-  timeTillPoint = {vertex: float('infinity') for vertex in graph}
+
+  #timeTillPoint = {vertex: float('infinity') for vertex in graph}
+  timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
 
   priority_queue = [(sourceNode, 0)]
@@ -33,7 +35,10 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
         for neighbor, weight in graph[current_vertex]:
             if neighbor in seen:
                 continue
-            
+
+            if neighbor not in timeTillPoint:
+                timeTillPoint[neighbor] = float('infinity')
+
             # If a shorter path is found, update the distance
             if timeTillPoint[neighbor] > timeTillPoint[current_vertex] + weight:
                 timeTillPoint[neighbor] = timeTillPoint[current_vertex] + weight
