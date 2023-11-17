@@ -24,9 +24,6 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   while priority_queue:
         current_vertex, current_distance = heapq.heappop(priority_queue)
 
-        #if current_vertex in seen:
-          #  continue
-
         seen.add(current_vertex)
 
         if current_vertex == destNode:
@@ -34,13 +31,13 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
 
         # Iterate over neighbors of the current vertex
         for neighbor, weight in graph[current_vertex]:
-            distance = current_distance + weight
+            if neighbor in seen:
+                continue
             
             # If a shorter path is found, update the distance
-            if distance < timeTillPoint[neighbor]:
-                timeTillPoint[neighbor] = distance
-                if neighbor not in seen:
-                    heapq.heappush(priority_queue, (neighbor, distance))
+            if timeTillPoint[neighbor] > timeTillPoint[current_vertex] + weight:
+                timeTillPoint[neighbor] = timeTillPoint[current_vertex] + weight
+                heapq.heappush(priority_queue, (neighbor, timeTillPoint[neighbor]))
     
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
