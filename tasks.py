@@ -73,6 +73,8 @@ def t1():
   waitingPassengerList = []
   waitingDriverList = []
   rideList = []
+  finishedDrivers = []
+  rideNumber = 0
 
   while (len(global_data.passengers) or len(waitingPassengerList)) and (len(global_data.drivers) or len(waitingDriverList)):
 
@@ -105,7 +107,7 @@ def t1():
       for d in dArr:
         waitingDriverList.append(d)
 
-    if len(waitingPassengerList) > 0 and len(waitingDriverList) > 0:
+    while len(waitingPassengerList) > 0 and len(waitingDriverList) > 0:
       #match passenger to driver
       passenger = waitingPassengerList.pop(0)
       driver = waitingDriverList.pop(0)
@@ -116,24 +118,15 @@ def t1():
       latestDate = driver.datetime if passengerDate < driverDate else passenger.datetime
       adjacencyList = getAdjacencyList(latestDate)
       
-      time1 = time.time()
 
       #calculating route details
       driverNode = grabOrCreateNode((driver.lat, driver.long)) # will return current node in graph or new created one if needed
       passengerNode = grabOrCreateNode((passenger.sourceLat, passenger.sourceLong))
       destNode = grabOrCreateNode((passenger.destLat, passenger.destLong))
 
-      time2 = time.time()
-      print(f'time to find nodes: {time2 - time1} seconds')
-
-      time3 = time.time()
-
-      timeFromDriverToPassenger = Dijkstra(adjacencyList, driverNode, passengerNode)*60
-      timeFromPassengerToDest = Dijkstra(adjacencyList, passengerNode, destNode)*60
+      timeFromDriverToPassenger = Dijkstra(adjacencyList, driverNode, passengerNode)
+      timeFromPassengerToDest = Dijkstra(adjacencyList, passengerNode, destNode)
       totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
-
-      time4 = time.time()
-      print(f'time to complete dijkstras: {time4 - time3} seconds')
 
       #saving ride details
       passengerWaitFromAvailableTillDest = 0
@@ -145,14 +138,25 @@ def t1():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      printRideDetails(r)
+      printRideDetails(r, rideNumber)
+      print(f'latestDate: {latestDate}')
+      print(f'driver.datetime: {driver.datetime}')
+      print(f'passenger.datetime: {passenger.datetime}')
+      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)
 
       if not driver.isDoneWithWork():
         waitingDriverList.append(driver) # should add as if in priority queue
-        waitingDriverList.sort()
+        waitingDriverList.sort() # by dates
+      else:
+        finishedDrivers.append(driver)
+    
+  printEndStats(rideList, finishedDrivers)
     
 def t2():
   

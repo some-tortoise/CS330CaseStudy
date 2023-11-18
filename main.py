@@ -36,17 +36,17 @@ print(f'time to read data: {time2 - time1} seconds')
 
 
 ### PREPROCESSING ###
-# each element in below is for hours from 0-23
 
 createAdjacencyLists()
 
 initialNodeList = []
+global_data.reversedNodes = {}
 for key, val in global_data.nodes.items():
+    global_data.reversedNodes[(global_data.nodes[key]['lat'], global_data.nodes[key]['lon'])] = key
     initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
 
 global_data.nodesSortedByLat = sorted(initialNodeList, key=lambda x: x[1])
 global_data.nodesSortedByLong = sorted(initialNodeList, key=lambda x: x[2])
-
 
 time3 = time.time()
 print(f'time for preprocessing: {time3 - time2} seconds')

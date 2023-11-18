@@ -1,6 +1,7 @@
 nodes = []
 nodesSortedByLat = []
 nodesSortedByLong = []
+reversedNodes = {}
 edges = []
 passengers = []
 drivers = []

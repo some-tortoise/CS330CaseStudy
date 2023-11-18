@@ -1,5 +1,6 @@
 import math
 import random
+import statistics
 from datetime import datetime
 
 import global_data
@@ -54,20 +55,29 @@ def grabOrCreateNode(point):
   Input (lat, long)
   Output: node created or closest node if new one not needed
   '''
+
+  if point in global_data.reversedNodes:
+    return global_data.reversedNodes[point]
   node = findClosestNode(point)
-  nodeLong = global_data.nodes[node]['lon']
   nodeLat = global_data.nodes[node]['lat']
+  nodeLong = global_data.nodes[node]['lon']
   dist = getHaversineDist((nodeLat, nodeLong), point)
+  
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
     nodeId = random.getrandbits(32)
-    global_data.nodes.update({nodeId:{'lon': point[0], 'lat' : point[1]}})
+    global_data.nodes[nodeId] = {'lon': point[0], 'lat' : point[1]}
     #global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
     for i in range(0, 24):
       temp = global_data.adjacencyListsWeekdays[i].get(str(node))
-      temp.append((str(nodeId), dist/10))
+      temp.append((str(nodeId), 60*(dist/20)))
       global_data.adjacencyListsWeekdays[i].update({str(node) : temp})
-      global_data.adjacencyListsWeekdays[i].update({str(nodeId) : [(str(node), dist/10)]})
+      global_data.adjacencyListsWeekdays[i][str(nodeId)] = [(str(node), (dist/20)*60)]
+
+      temp = global_data.adjacencyListsWeekends[i].get(str(node))
+      temp.append((str(nodeId), 60*(dist/20)))
+      global_data.adjacencyListsWeekends[i].update({str(node) : temp})
+      global_data.adjacencyListsWeekends[i][str(nodeId)] = [(str(node), (dist/20)*60)]
     
     return str(nodeId)
   
@@ -142,7 +152,7 @@ def createAdjacencyListAsDict(type, hour):
   for edge in global_data.edges:
       speed = float(edge[speedIndex])
       length = float(edge[2])
-      weight = length/speed
+      weight = (length/speed)*60
 
       if adjacencyList.get(edge[0]) is not None:
         temp = adjacencyList.get(edge[0])
@@ -156,7 +166,7 @@ def createAdjacencyListAsDict(type, hour):
 def getPassengersWithShortDate(date):
   l = []
   passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
-  while(passengerDate == date):
+  while(passengerDate == date and len(global_data.passengers)):
     passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
     passenger = global_data.passengers.pop(0)
     p = Passenger(*passenger, 0)
@@ -166,7 +176,7 @@ def getPassengersWithShortDate(date):
 def getDriversWithShortDate(date):
   l = []
   driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
-  while(driverDate == date):
+  while(driverDate == date  and len(global_data.drivers)):
     driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
     driver = global_data.drivers.pop(0)
     d = Driver(*driver, 0, 0, 0)
@@ -179,15 +189,20 @@ def updateDriverDetails(driver, ride, latestDate):
 
   driver.passengersCarried += 1
   driver.driverProfit += ride.pickupToDropoffTime - ride.driverToPassengerTime
+
+  #update timeOnJob and date in code below
+  dateInMin = 0
+
   if latestDate == driver.datetime:
     driver.timeOnJob += totalTimeInMin
-    driver.datetime = driverDate.timestamp() / 60 + totalTimeInMin
+    dateInMin = driverDate.timestamp() / 60 + totalTimeInMin
   else:
     passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
     driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
-    driver.datetime = passengerDate.timestamp() / 60 + totalTimeInMin
+    dateInMin = passengerDate.timestamp() / 60 + totalTimeInMin
   
-  driver.datetime = datetime.fromtimestamp(driver.datetime*60, tz = None)
+  #date conversion stuff
+  driver.datetime = datetime.fromtimestamp(dateInMin*60, tz = None)
   format_string = '%Y-%m-%d %H:%M:%S'
   date_string = driver.datetime.strftime(format_string)
   year,month,dayandrest = date_string.split('-')
@@ -284,4 +299,3 @@ def BinarySearchRange(list, a, b):
         return BinarySearchRange(list[m:],a,b)
     
     return m,mid
-
