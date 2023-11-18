@@ -79,14 +79,14 @@ def t1():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      # printRideDetails(r, rideNumber)
-      # print(f'latestDate: {latestDate}')
-      # print(f'driver.datetime: {driver.datetime}')
-      # print(f'passenger.datetime: {passenger.datetime}')
-      # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
-      # print(f'Number of drivers in queue: {len(waitingDriverList)}')
-      # print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
-      # rideNumber += 1
+      printRideDetails(r, rideNumber)
+      print(f'latestDate: {latestDate}')
+      print(f'driver.datetime: {driver.datetime}')
+      print(f'passenger.datetime: {passenger.datetime}')
+      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)
@@ -94,15 +94,8 @@ def t1():
       if not driver.isDoneWithWork():
         
         i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
-        print('--')
-        print(driver.datetime)
-        print(global_data.drivers[i-1].datetime)
-        print(global_data.drivers[i].datetime)
-        print('--')
-        
         global_data.drivers.insert(i, driver)
-        #global_data.drivers.append(driver) # should add as if in priority queue
-        #global_data.drivers.sort() # by dates
+
       else:
         finishedDrivers.append(driver)
     
