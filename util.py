@@ -165,22 +165,20 @@ def createAdjacencyListAsDict(type, hour):
 
 def getPassengersWithShortDate(date):
   l = []
-  passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
+  passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
   while(passengerDate == date and len(global_data.passengers)):
-    passengerDate = datetime.strptime(global_data.passengers[0][0], "%m/%d/%Y %H:%M:%S")
+    passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
     passenger = global_data.passengers.pop(0)
-    p = Passenger(*passenger, 0)
-    l.append(p)
+    l.append(passenger)
   return l  
 
 def getDriversWithShortDate(date):
   l = []
-  driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
+  driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
   while(driverDate == date  and len(global_data.drivers)):
-    driverDate = datetime.strptime(global_data.drivers[0][0], "%m/%d/%Y %H:%M:%S")
+    driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
     driver = global_data.drivers.pop(0)
-    d = Driver(*driver, 0, 0, 0)
-    l.append(d)
+    l.append(driver)
   return l 
 
 def updateDriverDetails(driver, ride, latestDate):
@@ -200,6 +198,7 @@ def updateDriverDetails(driver, ride, latestDate):
     passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
     driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
     dateInMin = passengerDate.timestamp() / 60 + totalTimeInMin
+    print(f'idle time: {(passengerDate-driverDate).total_seconds() / 60}')
   
   #date conversion stuff
   driver.datetime = datetime.fromtimestamp(dateInMin*60, tz = None)
@@ -243,7 +242,6 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
   while global_data.nodesSortedByLat[i][1]>=latLowBound and global_data.nodesSortedByLat[i][1]<=latHighBound:
     arrayOfNodesWithGoodLat.append(global_data.nodesSortedByLat[i][0])
     i-=1
-
 
   longLowBound = long - 0.03
   longHighBound = long + 0.03

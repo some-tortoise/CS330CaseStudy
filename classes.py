@@ -17,7 +17,7 @@ class Driver:
     self.passengersCarried = passengersCarried
     self.driverProfit = driverProfit
   def isDoneWithWork(self):
-    if self.timeOnJob > 180 or self.passengersCarried > 10:
+    if self.timeOnJob >= 180 or self.passengersCarried >= 10:
       return True
     return False
   def __lt__(self, other):

@@ -47,7 +47,7 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
   
-  #return sourceNode, destNode
+
 
 # '''ATTEMPT at floydWarshall'''
 # def floydWarshall(graph):
@@ -97,3 +97,71 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
 #     printSolution(dist)
  
  
+
+def BinarySearchOnDrivers(list, a):
+    '''
+    Input:
+    list and value of a we want to find
+
+    Output: 
+    index
+    '''
+    low = 0
+    high = len(list) - 1
+    mid = 0
+    while low <= high:
+        mid = math.floor((low+high)/2)
+        if list[mid].datetime < a and list[mid+1].datetime > a:
+            return mid + 1
+        elif list[mid].datetime < a:
+            low = mid + 1
+        elif list[mid].datetime > a:
+            high = mid - 1
+    return mid
+
+
+
+def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
+  '''
+  Input:
+  graph (adjacency list)
+  source as node
+  dest as node
+
+  Output:
+  returns time it takes to get from source to destination
+  '''
+
+  # Initialize distances dictionary with infinity for all vertices except the source
+
+  #timeTillPoint = {vertex: float('infinity') for vertex in graph}
+  timeTillPoint = {}
+  timeTillPoint[sourceNode] = 0
+
+  priority_queue = [(0, sourceNode)]
+  seen = set()
+
+  while priority_queue:
+        current_distance, current_vertex  = heapq.heappop(priority_queue)
+
+        if current_vertex in seen: 
+            continue
+        seen.add(current_vertex)
+
+        if current_vertex == destNode:
+            return current_distance
+
+        # Iterate over neighbors of the current vertex
+        for neighbor, weight in graph[current_vertex]:
+            if neighbor in seen:
+                continue
+
+            new_dist = current_distance + weight
+            # If a shorter path is found, update the distance
+            if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
+                timeTillPoint[neighbor] = new_dist
+                heapq.heappush(priority_queue, (new_dist, neighbor))
+    
+  # Return the time to the destination
+  return timeTillPoint[destNode] #this would return distance from given source param to destNode
+  

@@ -4,6 +4,7 @@ import math
 import heapq
 import time
 import statistics
+from classes import Driver
 
 def read_csv(str):
   file = open(str)
@@ -42,7 +43,7 @@ def printEndStats(rideList, finishedDrivers):
 
   driverProfits = [d.driverProfit for d in finishedDrivers]
   passengersCarried = [d.passengersCarried for d in finishedDrivers]
-  timeOnJobs = [d.timeOnJobs for d in finishedDrivers]
+  timeOnJobs = [d.timeOnJob for d in finishedDrivers]
 
   print('------------------------------------------------------')
   print(f'DRIVER TO PASSENGER TIMES')
