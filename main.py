@@ -22,14 +22,24 @@ time1 = time.time()
 global_data.edges = read_csv('./data/edges.csv')
 global_data.nodes = getNodes() # list of nodes
 
-passengerCSVarr = read_csv('./data/passengerSubset.csv')
+passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/driverSubset.csv')
+driverCSVarr = read_csv('./data/drivers.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
 print(f'time to read data: {time2 - time1} seconds')
+
+
+
+global_data.avgSpeedList = [0]*48
+
+for edge in global_data.edges:
+    for i in range(0, 48):
+        global_data.avgSpeedList[i] += float(edge[i+3])
+for i in range(0,48):
+    global_data.avgSpeedList[i] /= len(global_data.edges)
 
 
 ### PREPROCESSING ###

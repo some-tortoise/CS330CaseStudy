@@ -1,6 +1,7 @@
 import math
 import random
 import statistics
+import time
 from datetime import datetime
 
 import global_data
@@ -205,7 +206,6 @@ def updateDriverDetails(driver, ride, latestDate):
     passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
     driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
     dateInMin = passengerDate.timestamp() / 60 + totalTimeInMin
-    print(f'idle time: {(passengerDate-driverDate).total_seconds() / 60}')
   
   #date conversion stuff
   driver.datetime = datetime.fromtimestamp(dateInMin*60, tz = None)
@@ -224,7 +224,7 @@ def createAdjacencyLists():
     global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
     global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
 
-def findClosestNodeButCoolerAndFasterAndSexier(point):
+def findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck):
   '''
   Input:
   point as (lat, long)
@@ -236,9 +236,9 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
   minDist = float('Inf')
   lat, long = point
   closestNode = None
-  latLowBound = float(lat) - 0.03
-  latHighBound = float(lat) + 0.03
-  indexLat, valLat = BinarySearchRange([item[1] for item in global_data.nodesSortedByLat], latLowBound, latHighBound)
+  latLowBound = float(lat) - distToCheck
+  latHighBound = float(lat) + distToCheck
+  indexLat = BinarySearchRangeForSexyNode(global_data.nodesSortedByLat, latLowBound, latHighBound, 1)
 
   arrayOfNodesWithGoodLat = []
   i = indexLat
@@ -249,10 +249,10 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
   while global_data.nodesSortedByLat[i][1]>=latLowBound and global_data.nodesSortedByLat[i][1]<=latHighBound:
     arrayOfNodesWithGoodLat.append(global_data.nodesSortedByLat[i][0])
     i-=1
-
-  longLowBound = float(long) - 0.03
-  longHighBound = float(long) + 0.03
-  indexLong, valLong = BinarySearchRange([item[2] for item in global_data.nodesSortedByLong], longLowBound, longHighBound)
+  
+  longLowBound = float(long) - distToCheck
+  longHighBound = float(long) + distToCheck
+  indexLong = BinarySearchRangeForSexyNode(global_data.nodesSortedByLong, longLowBound, longHighBound, 2)
 
   arrayOfNodesWithGoodLong = []
   i = indexLong
@@ -280,30 +280,30 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
     if dist < minDist:
       minDist = dist
       closestNode = node
+  return str(closestNode)
 
-  return closestNode
 
-def BinarySearchRange(list, a, b):
+def BinarySearchRangeForSexyNode(list, a, b, k):
     '''
-    Input:
-    list and lower bound a and upper bound b
+    Output: 
+    index
     '''
-
-    n = len(list)
-    if(n == 1):
-        if float(list[0]) >= a and float(list[0]) <= b:
-            return list[0]
+    low = 0
+    high = len(list) - 1
+    mid = 0
+    while low <= high:
+        mid = int(math.floor((low+high)/2))
+        if list[mid][k] >= a and list[mid][k] <= b:
+            return mid
+        elif list[mid][k] < a:
+            low = mid + 1
+        elif list[mid][k] > b:
+            high = mid - 1
         else:
-            return None
-    
-    m = math.floor(n/2)
-    mid = list[m]
-    if float(mid)>b:
-        return BinarySearchRange(list[:m],a,b)
-    elif float(mid)<a:
-        return BinarySearchRange(list[m:],a,b)
-    
-    return m,mid
+            return TypeError
+        
+    return mid
+
 
 def grabOrCreateSexyNode(point):
   '''
@@ -314,7 +314,13 @@ def grabOrCreateSexyNode(point):
   if point in global_data.reversedNodes:
     return global_data.reversedNodes[point]
   
-  node = findClosestNodeButCoolerAndFasterAndSexier(point)
+  node = None
+  distToCheck = 0.00002
+  t = time.time()
+  while node == None:
+    node = findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck)
+    distToCheck *= 2
+  node = findClosestNode(point)
   nodeLat = global_data.nodes[node]['lat']
   nodeLong = global_data.nodes[node]['lon']
   dist = getHaversineDist((nodeLat, nodeLong), point)
@@ -322,7 +328,7 @@ def grabOrCreateSexyNode(point):
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
     nodeId = random.getrandbits(32)
-    global_data.nodes[nodeId] = {'lon': point[0], 'lat' : point[1]}
+    global_data.nodes[str(nodeId)] = {'lon': point[1], 'lat' : point[0]}
     #global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
     for i in range(0, 24):
       temp = global_data.adjacencyListsWeekdays[i].get(str(node))

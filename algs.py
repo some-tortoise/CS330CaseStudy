@@ -141,6 +141,18 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
   returns time it takes to get from source to destination
   '''
 
+  '''
+  hour = int(time.split()[1][0:2])
+  avgSpeed = 0
+  date = datetime.strptime(time, '%m/%d/%Y %H:%M%:%S')
+  if date.weekday() < 5:
+    avgSpeed = global_data.avgSpeedList[hour]
+  else:
+    avgSpeed = global_data.avgSpeedList[hour + 24]
+
+  '''
+
+
   # Initialize distances dictionary with infinity for all vertices except the source
 
   timeTillPoint = {}
@@ -169,7 +181,6 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
                 continue
 
             new_dist = current_distance + weight
-            
             # If a shorter path is found, update the distance
             if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
                 timeTillPoint[neighbor] = new_dist
@@ -180,10 +191,10 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
                 # print('---')
                 # print(h)
                 # print(Dijkstra(graph, neighbor, destNode))
-                # if h-Dijkstra(graph, neighbor, destNode) > 0:
-                #     print(f'overshot by {h-Dijkstra(graph, neighbor, destNode)}')
+                # # if h-Dijkstra(graph, neighbor, destNode) > 0:
+                # #     print(f'overshot by {h-Dijkstra(graph, neighbor, destNode)}')
                 # print(h-Dijkstra(graph, neighbor, destNode))
-
+                
                 # print('---')
                 heapq.heappush(priority_queue, (new_dist + h, neighbor))
     
