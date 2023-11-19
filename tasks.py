@@ -348,8 +348,25 @@ def t4():
 
     while len(waitingPassengerList) > 0 and len(waitingDriverList) > 0:
       #match passenger to driver
-      passenger = waitingPassengerList.pop(0)
-      driver = waitingDriverList.pop(0)
+      passenger = 0
+      driver = 0
+      minPairwiseDist = float('inf')
+      for p in waitingPassengerList:
+        passengerNode = grabOrCreateSexyNode((p.sourceLat, p.sourceLong))
+        passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
+        for d in waitingDriverList:
+          driverDate = datetime.strptime(d.datetime, "%m/%d/%Y %H:%M:%S")
+          latestDate = d.datetime if passengerDate < driverDate else p.datetime
+          adjacencyList = getAdjacencyList(latestDate)
+          driverNode = grabOrCreateSexyNode((d.lat, d.long))
+          dist = Astar_V2(adjacencyList, driverNode, passengerNode, latestDate)
+          if(dist < minPairwiseDist):
+            passenger = p
+            driver = d
+            minPairwiseDist = dist
+
+      waitingPassengerList.remove(passenger)
+      waitingDriverList.remove(driver)
 
       #some processing
       passengerDate = datetime.strptime(passenger.datetime, "%m/%d/%Y %H:%M:%S")
@@ -359,33 +376,14 @@ def t4():
       
 
       #calculating route details
-      #tw = time.time()
       driverNode = grabOrCreateSexyNode((driver.lat, driver.long)) # will return current node in graph or new created one if needed
       passengerNode = grabOrCreateSexyNode((passenger.sourceLat, passenger.sourceLong))
       destNode = grabOrCreateSexyNode((passenger.destLat, passenger.destLong))
-      #print(f'x: {time.time()-tw}')
-      print('------')
-      print('------')
-      tw1 = time.time()
-      timeFromDriverToPassenger = Dijkstra(adjacencyList, driverNode, passengerNode)
-      timeFromPassengerToDest = Dijkstra(adjacencyList, passengerNode, destNode)
-      tw2 = time.time()
-
-      print('---')
-      # dT = tw2-tw1
       
-
-      tw3 = time.time()
+      
       timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
       timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
       totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
-
-      tw4 = time.time()
-
-      print(f'{tw2-tw1} (Dijkstra Time)')
-      print(f'{tw4-tw3} (A* Time)')
-      print('------')
-      print('------')
 
       #saving ride details
       passengerWaitFromAvailableTillDest = 0
@@ -397,14 +395,14 @@ def t4():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      # printRideDetails(r, rideNumber)
+      printRideDetails(r, rideNumber)
       # print(f'latestDate: {latestDate}')
       # print(f'driver.datetime: {driver.datetime}')
       # print(f'passenger.datetime: {passenger.datetime}')
       # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
       # print(f'Number of drivers in queue: {len(waitingDriverList)}')
       # print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
-      # rideNumber += 1
+      rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)

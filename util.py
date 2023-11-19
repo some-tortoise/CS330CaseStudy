@@ -5,14 +5,14 @@ import time
 from datetime import datetime
 
 import global_data
-from classes import Passenger, Driver
+from classes import Passenger, Driver, KdNode
 
 
 def getManhattanDist(point1, point2):
   lat1, lon1 = point1
   lat2, lon2 = point2
-  dist1 = abs(lat1-lat2)*69.09
-  dist2 = abs(lon1-lon2)*51.34
+  dist1 = abs(float(lat1)-float(lat2))*69.09
+  dist2 = abs(float(lon1)-float(lon2))*51.34
 
   return dist1+dist2
 
@@ -313,33 +313,77 @@ def grabOrCreateSexyNode(point):
   if point in global_data.reversedNodes:
     return global_data.reversedNodes[point]
   
-  node = None
-  distToCheck = 0.00002
   t = time.time()
-  # while node == None:
-  #   node = findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck)
-  #   distToCheck *= 2
-  node = findClosestNode(point)
+
+  node = findClosestInKD(global_data.kdroot, point, global_data.kdroot).value[0]
   nodeLat = global_data.nodes[node]['lat']
   nodeLong = global_data.nodes[node]['lon']
   dist = getHaversineDist((nodeLat, nodeLong), point)
   
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
-    nodeId = random.getrandbits(32)
+    nodeId = str(random.getrandbits(32))
     global_data.nodes[str(nodeId)] = {'lon': point[1], 'lat' : point[0]}
-    #global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
+    global_data.reversedNodes[(point[0], point[1])] = nodeId
     for i in range(0, 24):
       temp = global_data.adjacencyListsWeekdays[i].get(str(node))
       temp.append((str(nodeId), 60*(dist/20)))
       global_data.adjacencyListsWeekdays[i].update({str(node) : temp})
-      global_data.adjacencyListsWeekdays[i][str(nodeId)] = [(str(node), (dist/20)*60)]
+      global_data.adjacencyListsWeekdays[i][nodeId] = [(str(node), (dist/20)*60)]
 
       temp = global_data.adjacencyListsWeekends[i].get(str(node))
       temp.append((str(nodeId), 60*(dist/20)))
       global_data.adjacencyListsWeekends[i].update({str(node) : temp})
-      global_data.adjacencyListsWeekends[i][str(nodeId)] = [(str(node), (dist/20)*60)]
+      global_data.adjacencyListsWeekends[i][nodeId] = [(str(node), (dist/20)*60)]
     
     return str(nodeId)
   
   return node
+
+def buildKD(list, dim=2, splitter=0): #BUILD KEVIN D.
+    if len(list) == 0:
+      return
+    if splitter == 0:
+      list.sort(key=lambda w: float(w[1]))
+    elif splitter == 1:
+      list.sort(key=lambda w: float(w[2]))
+    median = len(list) // 2
+    rightNode = buildKD(list[median + 1:], dim, (splitter + 1) % dim)
+    leftNode = buildKD(list[:median], dim, (splitter + 1) % dim)
+    return KdNode(list[median], leftNode, rightNode, splitter)
+
+
+def findClosestInKD(root, query_point, current_closest, splitter=0):
+  if root is None:
+    return current_closest
+  
+  pLat, pLon = query_point
+  pLat = float(pLat)
+  pLon = float(pLon)
+  
+  if splitter == 0: # USE LAT
+    if pLat < root.value[1]:
+      nextNode = root.leftNode
+    else:
+      nextNode = root.rightNode
+  else: # USE LON
+    if pLon < root.value[2]:
+      nextNode = root.leftNode
+    else:
+      nextNode = root.rightNode
+
+  current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
+
+  #check nodes
+  rootPoint = (root.value[1], root.value[2])
+  distToRoot = getManhattanDist(query_point, rootPoint)
+  currentClosestDist = getManhattanDist(query_point, (current_closest.value[1], current_closest.value[2]))
+  if distToRoot < currentClosestDist:
+    current_closest = root
+
+  #check other subtrees if need be
+  if abs(float(query_point[splitter]) - rootPoint[splitter]) < currentClosestDist:
+    nextNode = root.rightNode if nextNode == root.leftNode else root.leftNode
+    current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
+  
+  return current_closest

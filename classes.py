@@ -30,3 +30,10 @@ class Ride:
     self.driverToPassengerTime = driverToPassengerTime
     self.pickupToDropoffTime = pickupToDropoffTime
     self.passengerWaitFromAvailableTillDest = passengerWaitFromAvailableTillDest
+
+class KdNode(object):
+    def __init__(self, value=None, leftNode=None, rightNode=None, splitter=0):
+      self.value = value
+      self.leftNode = leftNode
+      self.rightNode = rightNode
+      self.splitter = splitter
