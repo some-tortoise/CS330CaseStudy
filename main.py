@@ -19,7 +19,6 @@ time1 = time.time()
 
 ###READ IN DATA###
 
-global_data.passengers = read_csv('./data/passengers.csv')
 global_data.edges = read_csv('./data/edges.csv')
 global_data.nodes = getNodes() # list of nodes
 
@@ -53,3 +52,4 @@ print(f'time for preprocessing: {time3 - time2} seconds')
 t1()
 
 time4 = time.time()
+print(f'time for task: {time4 - time3} seconds')

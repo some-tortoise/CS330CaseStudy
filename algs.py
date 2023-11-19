@@ -111,12 +111,20 @@ def BinarySearchOnDrivers(list, a):
     mid = 0
     while low <= high:
         mid = math.floor((low+high)/2)
-        if list[mid].datetime < a and list[mid+1].datetime > a:
+        # print('---')
+        # print(mid)
+        # print(list[mid])
+        # print(a)
+        # print('---')
+        if (list[mid].datetime <= a and mid == high) or (list[mid].datetime <= a and list[mid+1].datetime >= a):
             return mid + 1
         elif list[mid].datetime < a:
             low = mid + 1
         elif list[mid].datetime > a:
             high = mid - 1
+        else:
+            return TypeError
+        
     return mid
 
 
@@ -138,7 +146,11 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
 
-  priority_queue = [(0, sourceNode)]
+  sourcePoint = (global_data.nodes[sourceNode]['lat'], global_data.nodes[sourceNode]['lon'])
+  destPoint = (global_data.nodes[destNode]['lat'], global_data.nodes[destNode]['lon'])
+
+  h = getHaversineDist(sourcePoint, destNode)
+  priority_queue = [(, 0, sourceNode)] # (h, g, node)
   seen = set()
 
   while priority_queue:
