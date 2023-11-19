@@ -99,7 +99,6 @@ def t1():
     
   printEndStats(rideList, finishedDrivers)
 
-
 def t2():
   
   waitingPassengerList = []
@@ -308,7 +307,6 @@ def t3():
     
   printEndStats(rideList, finishedDrivers)
 
-
 def t4():
   
   waitingPassengerList = []
@@ -378,8 +376,8 @@ def t4():
       
 
       tw3 = time.time()
-      timeFromDriverToPassenger = A_star_v2(adjacencyList, driverNode, passengerNode)
-      timeFromPassengerToDest = A_star_v2(adjacencyList, passengerNode, destNode)
+      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
+      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
       totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
 
       tw4 = time.time()
@@ -388,13 +386,6 @@ def t4():
       print(f'{tw4-tw3} (A* Time)')
       print('------')
       print('------')
-      # aT = tw2-tw1
-
-      # if aT > dT:
-      #   print('a star slower')
-      # else:
-      #   print('dijkstra slower')
-      #print(f'{tw2-tw1} (Astar Time)')
 
       #saving ride details
       passengerWaitFromAvailableTillDest = 0

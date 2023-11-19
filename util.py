@@ -11,10 +11,9 @@ from classes import Passenger, Driver
 def getManhattanDist(point1, point2):
   lat1, lon1 = point1
   lat2, lon2 = point2
-  dist1 = abs(float(lat1)-float(lat2))*69.09
-  dist2 = abs(float(lon1)-float(lon2))*51.34
-  # dist1 = getHaversineDist(point1, (lat1, lon2))
-  # dist2 = getHaversineDist(point2, (lat2, lon1))
+  dist1 = abs(lat1-lat2)*69.09
+  dist2 = abs(lon1-lon2)*51.34
+
   return dist1+dist2
 
 def getHaversineDist(point1, point2):
