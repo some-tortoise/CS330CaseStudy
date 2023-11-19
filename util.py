@@ -282,7 +282,6 @@ def findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck):
       closestNode = node
   return str(closestNode)
 
-
 def BinarySearchRangeForSexyNode(list, a, b, k):
     '''
     Output: 
@@ -304,7 +303,6 @@ def BinarySearchRangeForSexyNode(list, a, b, k):
         
     return mid
 
-
 def grabOrCreateSexyNode(point):
   '''
   Input (lat, long)
@@ -317,9 +315,9 @@ def grabOrCreateSexyNode(point):
   node = None
   distToCheck = 0.00002
   t = time.time()
-  while node == None:
-    node = findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck)
-    distToCheck *= 2
+  # while node == None:
+  #   node = findClosestNodeButCoolerAndFasterAndSexier(point, distToCheck)
+  #   distToCheck *= 2
   node = findClosestNode(point)
   nodeLat = global_data.nodes[node]['lat']
   nodeLong = global_data.nodes[node]['lon']

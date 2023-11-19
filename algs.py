@@ -32,7 +32,8 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
         seen.add(current_vertex)
 
         if current_vertex == destNode:
-            return current_distance
+            #return current_distance
+            break
 
         # Iterate over neighbors of the current vertex
         for neighbor, weight in graph[current_vertex]:
@@ -46,6 +47,7 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
                 heapq.heappush(priority_queue, (new_dist, neighbor))
     
   # Return the time to the destination
+  print(f'Nodes pulled off by Dijkstra: {len(timeTillPoint)}')
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
   
 
@@ -129,7 +131,6 @@ def BinarySearchOnDrivers(list, a):
     return mid
 
 
-
 def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
   '''
   Input:
@@ -151,9 +152,6 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
     avgSpeed = global_data.avgSpeedList[hour + 24]
 
   '''
-
-
-  # Initialize distances dictionary with infinity for all vertices except the source
 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
@@ -200,3 +198,46 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
     
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
+
+
+def A_star_v2(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
+
+  timeTillPoint = {}
+  timeTillPoint[sourceNode] = 0
+
+  sourcePoint = (global_data.nodes[sourceNode]['lat'], global_data.nodes[sourceNode]['lon'])
+  destPoint = (global_data.nodes[destNode]['lat'], global_data.nodes[destNode]['lon'])
+  h = getHaversineDist(sourcePoint, destPoint)*2
+  priority_queue = [(h, sourceNode)] # (f, node) 
+  seen = set()
+
+  while priority_queue:
+        f, current_vertex  = heapq.heappop(priority_queue)
+        current_distance = timeTillPoint[current_vertex]
+
+        if current_vertex in seen: 
+            continue
+        seen.add(current_vertex)
+
+        if current_vertex == destNode:
+            break
+        
+        # Iterate over neighbors of the current vertex
+        for neighbor, weight in graph[current_vertex]:
+            if neighbor in seen:
+                continue
+
+            new_dist = current_distance + weight
+            # If a shorter path is found, update the distance
+            if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
+                timeTillPoint[neighbor] = new_dist
+
+                srcPoint = (global_data.nodes[neighbor]['lat'], global_data.nodes[neighbor]['lon'])
+
+                h = getHaversineDist(srcPoint, destPoint)*2
+                
+                heapq.heappush(priority_queue, (new_dist + h, neighbor))
+  
+  print(f'Nodes pulled off by A*: {len(timeTillPoint)}')
+  return timeTillPoint[destNode] #this would return distance from given source param to destNode
+
