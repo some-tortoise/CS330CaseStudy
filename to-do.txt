@@ -1,6 +1,1 @@
-1. Figure out what haversine distance is measuring
-1 and a half. Maybe rename addNodeToGraphIfNeeded
-2. do T2
-3. do T3
-4. do T4
-5. do T5
+1. Use Fibonacci Heap in Dijkstra ??

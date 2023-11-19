@@ -59,7 +59,7 @@ time3 = time.time()
 print(f'time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
-t4()
+t3()
 
 time4 = time.time()
 print(f'time for task: {time4 - time3} seconds')
