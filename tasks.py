@@ -8,7 +8,6 @@ from algs import *
 from in_out import *
 import global_data
 
-
 def t1():
   
   waitingPassengerList = []
@@ -415,5 +414,3 @@ def t4():
         finishedDrivers.append(driver)
     
   printEndStats(rideList, finishedDrivers)
-
-  

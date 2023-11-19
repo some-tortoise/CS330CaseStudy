@@ -5,7 +5,7 @@ import math
 import heapq
 import time
 import statistics
-import cProfile
+import cProfile   #REMOVE BEFORE SUBMISSION
 
 
 
@@ -18,13 +18,13 @@ from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
 
+
 time1 = time.time()
 
 ###READ IN DATA###
 
 global_data.edges = read_csv('./data/edges.csv')
 global_data.nodes = getNodes() # dict of nodes
-
 
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
@@ -33,9 +33,11 @@ driverCSVarr = read_csv('./data/drivers.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
-print(f'time to read data: {time2 - time1} seconds')
+print(f'Time to read data: {time2 - time1} seconds')
 
 
+
+### PREPROCESSING ###
 
 global_data.avgSpeedList = [0]*48
 
@@ -45,9 +47,6 @@ for edge in global_data.edges:
 for i in range(0,48):
     global_data.avgSpeedList[i] /= len(global_data.edges)
 
-
-### PREPROCESSING ###
-
 createAdjacencyLists()
 
 initialNodeList = []
@@ -56,17 +55,17 @@ for key, val in global_data.nodes.items():
     global_data.reversedNodes[(global_data.nodes[key]['lat'], global_data.nodes[key]['lon'])] = key
     initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
 
-time3 = time.time()
-print(f'time for preprocessing: {time3 - time2} seconds')
-
 global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
+
+time3 = time.time()
+print(f'Time for preprocessing: {time3 - time2} seconds')
 
 
 
 ### RUN TASK ###
 
-# Run the profiler
+# Run the profiler (REMOVE BEFORE SUBMISSION)
 cProfile.run('t3()', sort='cumulative')
 
 time4 = time.time()
-print(f'time for task: {time4 - time3} seconds')
+print(f'Time for task: {time4 - time3} seconds')

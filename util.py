@@ -7,6 +7,138 @@ from datetime import datetime
 import global_data
 from classes import Passenger, Driver, KdNode
 
+def createAdjacencyLists():
+  for i in range(0,24):
+    global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
+    global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
+
+def createAdjacencyListAsDict(type, hour):
+  '''
+  Input:
+  type can either be 'weekday' or 'weekend'
+  hour is integer from [0,23]
+
+  Output: 
+  adjacency list
+  '''
+  adjacencyList = {}
+
+  if(type == 'weekday'):
+    speedIndex = 3+hour #look at column 3+i for weights
+  elif(type == 'weekend'):
+    speedIndex = 27+hour #look at column 27+i for weights
+  else:
+    raise TypeError
+  
+  for edge in global_data.edges:
+      speed = float(edge[speedIndex])
+      length = float(edge[2])
+      weight = (length/speed)*60 # in minutes
+
+      if adjacencyList.get(edge[0]) is not None:
+        temp = adjacencyList.get(edge[0])
+        temp.append((edge[1], weight))
+        adjacencyList.update({edge[0] : temp})
+      else:
+        adjacencyList.update({edge[0] : [(edge[1], weight)]})
+
+  return adjacencyList
+
+# def createAdjacencyListAsLinkedList(type, hour):
+  
+  '''
+  Input:
+  type can either be 'weekday' or 'weekend'
+  hour is integer from [0,23]
+
+  Output: 
+  adjacency list
+  '''
+  adjacencyList = []
+
+  if(type == 'weekday'):
+    speedIndex = 3+hour #look at column 3+i for weights
+  elif(type == 'weekend'):
+    speedIndex = 27+hour #look at column 27+i for weights
+  else:
+    raise TypeError
+  
+
+  for edge in edges:
+      speed = float(edge[speedIndex])
+      length = float(edge[2])
+      weight = length/speed
+      if len(adjacencyList) == 0 or adjacencyList[-1][0] != edge[0]:
+        adjacencyList.append([edge[0],(edge[1], weight)]) # [sourceNode, (destNode, weight)]
+      else:
+        adjacencyList[-1].append((edge[1], weight)) # (destNode, weight)
+
+  return adjacencyList
+
+def getAdjacencyList(dateStr):
+  '''
+  Input:
+  dateString
+  Output:
+  correct adjacencyList
+  '''
+  hour = int(dateStr.split()[1][0:2])
+  adjacencyList = 0
+  date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
+  if date.weekday() < 5:
+    adjacencyList = global_data.adjacencyListsWeekdays[hour]
+  else:
+    adjacencyList = global_data.adjacencyListsWeekends[hour]
+  
+  return adjacencyList
+
+def getPassengersWithShortDate(date):
+  l = []
+  passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+  while(passengerDate == date and len(global_data.passengers)):
+    passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+    passenger = global_data.passengers.pop(0)
+    l.append(passenger)
+  return l  
+
+def getDriversWithShortDate(date):
+  l = []
+  driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+  while(driverDate == date  and len(global_data.drivers)):
+    driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+    driver = global_data.drivers.pop(0)
+    l.append(driver)
+  return l 
+
+def updateDriverDetails(driver, ride, latestDate):
+  driverDate = datetime.strptime(driver.datetime, "%m/%d/%Y %H:%M:%S")
+  totalTimeInMin = ride.pickupToDropoffTime + ride.driverToPassengerTime
+
+  driver.passengersCarried += 1
+  driver.driverProfit += ride.pickupToDropoffTime - ride.driverToPassengerTime
+
+  #update timeOnJob and date in code below
+  dateInMin = 0
+
+  if latestDate == driver.datetime:
+    driver.timeOnJob += totalTimeInMin
+    dateInMin = driverDate.timestamp() / 60 + totalTimeInMin
+  else:
+    passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
+    driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
+    dateInMin = passengerDate.timestamp() / 60 + totalTimeInMin
+  
+  #date conversion stuff
+  driver.datetime = datetime.fromtimestamp(dateInMin*60, tz = None)
+  format_string = '%Y-%m-%d %H:%M:%S'
+  date_string = driver.datetime.strftime(format_string)
+  year,month,dayandrest = date_string.split('-')
+  day, rest = dayandrest.split(' ')
+
+  reformatted_date = f'{month}/{day}/{year} {rest}'
+  driver.datetime = reformatted_date
+
+  return driver
 
 def getManhattanDist(point1, point2):
   lat1, lon1 = point1
@@ -67,6 +199,7 @@ def grabOrCreateNode(point):
 
   if point in global_data.reversedNodes:
     return global_data.reversedNodes[point]
+  
   node = str(findClosestNode(point))
   nodeLat = global_data.nodes[node]['lat']
   nodeLong = global_data.nodes[node]['lon']
@@ -93,139 +226,6 @@ def grabOrCreateNode(point):
   
   return node
 
-def getAdjacencyList(dateStr):
-  '''
-  Input:
-  dateString
-  Output:
-  correct adjacencyList
-  '''
-  hour = int(dateStr.split()[1][0:2])
-  adjacencyList = 0
-  date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
-  if date.weekday() < 5:
-    adjacencyList = global_data.adjacencyListsWeekdays[hour]
-  else:
-    adjacencyList = global_data.adjacencyListsWeekends[hour]
-  
-  return adjacencyList
-
-# def createAdjacencyListAsLinkedList(type, hour):
-  
-  '''
-  Input:
-  type can either be 'weekday' or 'weekend'
-  hour is integer from [0,23]
-
-  Output: 
-  adjacency list
-  '''
-  adjacencyList = []
-
-  if(type == 'weekday'):
-    speedIndex = 3+hour #look at column 3+i for weights
-  elif(type == 'weekend'):
-    speedIndex = 27+hour #look at column 27+i for weights
-  else:
-    raise TypeError
-  
-
-  for edge in edges:
-      speed = float(edge[speedIndex])
-      length = float(edge[2])
-      weight = length/speed
-      if len(adjacencyList) == 0 or adjacencyList[-1][0] != edge[0]:
-        adjacencyList.append([edge[0],(edge[1], weight)]) # [sourceNode, (destNode, weight)]
-      else:
-        adjacencyList[-1].append((edge[1], weight)) # (destNode, weight)
-
-  return adjacencyList
-
-def createAdjacencyListAsDict(type, hour):
-  '''
-  Input:
-  type can either be 'weekday' or 'weekend'
-  hour is integer from [0,23]
-
-  Output: 
-  adjacency list
-  '''
-  adjacencyList = {}
-
-  if(type == 'weekday'):
-    speedIndex = 3+hour #look at column 3+i for weights
-  elif(type == 'weekend'):
-    speedIndex = 27+hour #look at column 27+i for weights
-  else:
-    raise TypeError
-  
-  for edge in global_data.edges:
-      speed = float(edge[speedIndex])
-      length = float(edge[2])
-      weight = (length/speed)*60
-
-      if adjacencyList.get(edge[0]) is not None:
-        temp = adjacencyList.get(edge[0])
-        temp.append((edge[1], weight))
-        adjacencyList.update({edge[0] : temp})
-      else:
-        adjacencyList.update({edge[0] : [(edge[1], weight)]})
-
-  return adjacencyList
-
-def getPassengersWithShortDate(date):
-  l = []
-  passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
-  while(passengerDate == date and len(global_data.passengers)):
-    passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
-    passenger = global_data.passengers.pop(0)
-    l.append(passenger)
-  return l  
-
-def getDriversWithShortDate(date):
-  l = []
-  driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
-  while(driverDate == date  and len(global_data.drivers)):
-    driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
-    driver = global_data.drivers.pop(0)
-    l.append(driver)
-  return l 
-
-def updateDriverDetails(driver, ride, latestDate):
-  driverDate = datetime.strptime(driver.datetime, "%m/%d/%Y %H:%M:%S")
-  totalTimeInMin = ride.pickupToDropoffTime + ride.driverToPassengerTime
-
-  driver.passengersCarried += 1
-  driver.driverProfit += ride.pickupToDropoffTime - ride.driverToPassengerTime
-
-  #update timeOnJob and date in code below
-  dateInMin = 0
-
-  if latestDate == driver.datetime:
-    driver.timeOnJob += totalTimeInMin
-    dateInMin = driverDate.timestamp() / 60 + totalTimeInMin
-  else:
-    passengerDate = datetime.strptime(latestDate, "%m/%d/%Y %H:%M:%S")
-    driver.timeOnJob += (passengerDate-driverDate).total_seconds() / 60 + totalTimeInMin 
-    dateInMin = passengerDate.timestamp() / 60 + totalTimeInMin
-  
-  #date conversion stuff
-  driver.datetime = datetime.fromtimestamp(dateInMin*60, tz = None)
-  format_string = '%Y-%m-%d %H:%M:%S'
-  date_string = driver.datetime.strftime(format_string)
-  year,month,dayandrest = date_string.split('-')
-  day, rest = dayandrest.split(' ')
-
-  reformatted_date = f'{month}/{day}/{year} {rest}'
-  driver.datetime = reformatted_date
-
-  return driver
-
-def createAdjacencyLists():
-  for i in range(0,24):
-    global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
-    global_data.adjacencyListsWeekends[i] = createAdjacencyListAsDict('weekend', i)
-
 def grabOrCreateSexyNode(point):
   '''
   Input (lat, long)
@@ -245,6 +245,7 @@ def grabOrCreateSexyNode(point):
     nodeId = str(random.getrandbits(32))
     global_data.nodes[nodeId] = {'lon': point[1], 'lat' : point[0]}
     global_data.reversedNodes[(point[0], point[1])] = nodeId
+
     for i in range(0, 24):
       temp = global_data.adjacencyListsWeekdays[i].get(node)
       temp.append((nodeId, 60*(dist/20)))

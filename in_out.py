@@ -29,14 +29,13 @@ def getNodes():
 
 def printRideDetails(r, rideNum):
   print(f'---Ride #{rideNum}---')
-  print(f'time from driver to passenger (minutes): {r.driverToPassengerTime}')
-  print(f'time from pick up to destination (minutes): {r.pickupToDropoffTime}')
-  print(f'total time of trip (minutes): {r.pickupToDropoffTime + r.driverToPassengerTime}')
-  print(f'passenger time from hailing a ride till reaching dest (minutes): {r.passengerWaitFromAvailableTillDest}')
-  print(f'driver profit: {r.pickupToDropoffTime - r.driverToPassengerTime}')
+  print(f'Time from driver to passenger (minutes): {r.driverToPassengerTime}')
+  print(f'Time from pick up to destination (minutes): {r.pickupToDropoffTime}')
+  print(f'Total time of trip (minutes): {r.pickupToDropoffTime + r.driverToPassengerTime}')
+  print(f'Passenger time from hailing a ride till reaching dest (minutes): {r.passengerWaitFromAvailableTillDest}')
+  print(f'Driver profit: {r.pickupToDropoffTime - r.driverToPassengerTime}')
 
 def printEndStats(rideList, finishedDrivers):
-
   driverToPassengerTimes = [r.driverToPassengerTime for r in rideList]
   pickupToDropoffTimes = [r.pickupToDropoffTime for r in rideList]
   passengerWaitFromAvailableTillDest = [r.passengerWaitFromAvailableTillDest for r in rideList]

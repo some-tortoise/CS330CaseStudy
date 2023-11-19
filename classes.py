@@ -1,4 +1,5 @@
 from datetime import datetime
+
 class Passenger:
   def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting):
     self.datetime = datetime
@@ -17,7 +18,7 @@ class Driver:
     self.passengersCarried = passengersCarried
     self.driverProfit = driverProfit
   def isDoneWithWork(self):
-    if self.timeOnJob >= 180 or self.passengersCarried >= 10:
+    if self.timeOnJob >= 240 or self.passengersCarried >= 15:
       return True
     return False
   def __lt__(self, other):
