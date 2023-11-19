@@ -7,6 +7,13 @@ import global_data
 from classes import Passenger, Driver
 
 
+def getManhattanDist(point1, point2):
+  lat1, lon1 = point1
+  lat2, lon2 = point2
+  dist1 = getHaversineDist(point1, (lat1, lon2))
+  dist2 = getHaversineDist(point2, (lat2, lon1))
+  return dist1+dist2
+
 def getHaversineDist(point1, point2):
   '''
   returns estimate of distance between two points in miles
@@ -66,7 +73,7 @@ def grabOrCreateNode(point):
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
     nodeId = random.getrandbits(32)
-    global_data.nodes[nodeId] = {'lon': point[0], 'lat' : point[1]}
+    global_data.nodes[str(nodeId)] = {'lon': point[1], 'lat' : point[0]}
     #global_data.edges.append(node, nodeId, dist, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
     for i in range(0, 24):
       temp = global_data.adjacencyListsWeekdays[i].get(str(node))
@@ -229,8 +236,8 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
   minDist = float('Inf')
   lat, long = point
   closestNode = None
-  latLowBound = lat - 0.03
-  latHighBound = lat + 0.03
+  latLowBound = float(lat) - 0.03
+  latHighBound = float(lat) + 0.03
   indexLat, valLat = BinarySearchRange([item[1] for item in global_data.nodesSortedByLat], latLowBound, latHighBound)
 
   arrayOfNodesWithGoodLat = []
@@ -243,8 +250,8 @@ def findClosestNodeButCoolerAndFasterAndSexier(point):
     arrayOfNodesWithGoodLat.append(global_data.nodesSortedByLat[i][0])
     i-=1
 
-  longLowBound = long - 0.03
-  longHighBound = long + 0.03
+  longLowBound = float(long) - 0.03
+  longHighBound = float(long) + 0.03
   indexLong, valLong = BinarySearchRange([item[2] for item in global_data.nodesSortedByLong], longLowBound, longHighBound)
 
   arrayOfNodesWithGoodLong = []

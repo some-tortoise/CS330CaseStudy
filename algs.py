@@ -2,6 +2,7 @@ import heapq
 import math
 
 from util import *
+import global_data
 
 def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
   '''
@@ -142,19 +143,18 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
 
   # Initialize distances dictionary with infinity for all vertices except the source
 
-  #timeTillPoint = {vertex: float('infinity') for vertex in graph}
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
 
   sourcePoint = (global_data.nodes[sourceNode]['lat'], global_data.nodes[sourceNode]['lon'])
   destPoint = (global_data.nodes[destNode]['lat'], global_data.nodes[destNode]['lon'])
-
-  h = getHaversineDist(sourcePoint, destNode)
-  priority_queue = [(, 0, sourceNode)] # (h, g, node)
+  h = getHaversineDist(sourcePoint, destPoint)*2
+  priority_queue = [(h, sourceNode)] # (f, node) 
   seen = set()
 
   while priority_queue:
-        current_distance, current_vertex  = heapq.heappop(priority_queue)
+        f, current_vertex  = heapq.heappop(priority_queue)
+        current_distance = timeTillPoint[current_vertex]
 
         if current_vertex in seen: 
             continue
@@ -162,18 +162,30 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
 
         if current_vertex == destNode:
             return current_distance
-
+        
         # Iterate over neighbors of the current vertex
         for neighbor, weight in graph[current_vertex]:
             if neighbor in seen:
                 continue
 
             new_dist = current_distance + weight
+            
             # If a shorter path is found, update the distance
             if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
                 timeTillPoint[neighbor] = new_dist
-                heapq.heappush(priority_queue, (new_dist, neighbor))
+
+                srcPoint = (global_data.nodes[neighbor]['lat'], global_data.nodes[neighbor]['lon'])
+
+                h = getHaversineDist(srcPoint, destPoint)*2
+                # print('---')
+                # print(h)
+                # print(Dijkstra(graph, neighbor, destNode))
+                # if h-Dijkstra(graph, neighbor, destNode) > 0:
+                #     print(f'overshot by {h-Dijkstra(graph, neighbor, destNode)}')
+                # print(h-Dijkstra(graph, neighbor, destNode))
+
+                # print('---')
+                heapq.heappush(priority_queue, (new_dist + h, neighbor))
     
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
-  
