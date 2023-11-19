@@ -248,8 +248,9 @@ def t3():
       passengerNodeIDs = []
       for p in waitingPassengerList:
         passengerNodeIDs.append(grabOrCreateNode((p.sourceLat, p.sourceLong)))
+      
       for d in waitingDriverList:
-        driverNode = grabOrCreateSexyNode((d.lat, d.long))
+        driverNode = grabOrCreateNode((d.lat, d.long))
         adjacencyList = getAdjacencyList(d.datetime)
         dist, pID = DijkstraToAll(adjacencyList, driverNode, passengerNodeIDs)
         if(dist < minPairwiseDist):
