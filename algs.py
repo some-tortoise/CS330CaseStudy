@@ -1,5 +1,6 @@
 import heapq
 import math
+from datetime import datetime
 
 from util import *
 import global_data
@@ -131,7 +132,8 @@ def BinarySearchOnDrivers(list, a):
     return mid
 
 
-def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time variable from parameters
+
+def Astar(graph, sourceNode, destNode, dateStr): #added adj list parameter, deleted time variable from parameters
   '''
   Input:
   graph (adjacency list)
@@ -145,7 +147,7 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
   '''
   hour = int(time.split()[1][0:2])
   avgSpeed = 0
-  date = datetime.strptime(time, '%m/%d/%Y %H:%M%:%S')
+  date = datetime.strptime(time, "%m/%d/%Y %H:%M:%S")
   if date.weekday() < 5:
     avgSpeed = global_data.avgSpeedList[hour]
   else:
@@ -156,9 +158,18 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
 
+  hour = int(dateStr.split()[1][0:2])
+  avgSpeed = 0
+  date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
+  if date.weekday() < 5:
+    avgSpeed = global_data.avgSpeedList[hour]
+  else:
+    avgSpeed = global_data.avgSpeedList[hour + 24]
+
   sourcePoint = (global_data.nodes[sourceNode]['lat'], global_data.nodes[sourceNode]['lon'])
   destPoint = (global_data.nodes[destNode]['lat'], global_data.nodes[destNode]['lon'])
-  h = getHaversineDist(sourcePoint, destPoint)*2
+  h = (getManhattanDist(sourcePoint, destPoint)/avgSpeed)*60
+  # h = getHaversineDist(sourcePoint, destPoint)*2
   priority_queue = [(h, sourceNode)] # (f, node) 
   seen = set()
 
@@ -185,15 +196,16 @@ def Astar(graph, sourceNode, destNode): #added adj list parameter, deleted time 
 
                 srcPoint = (global_data.nodes[neighbor]['lat'], global_data.nodes[neighbor]['lon'])
 
-                h = getHaversineDist(srcPoint, destPoint)*2
-                # print('---')
-                # print(h)
-                # print(Dijkstra(graph, neighbor, destNode))
-                # # if h-Dijkstra(graph, neighbor, destNode) > 0:
-                # #     print(f'overshot by {h-Dijkstra(graph, neighbor, destNode)}')
-                # print(h-Dijkstra(graph, neighbor, destNode))
-                
-                # print('---')
+                h = (getManhattanDist(srcPoint, destPoint)/avgSpeed)*60
+
+                print('---')
+                print(h)
+                print(Dijkstra(graph, neighbor, destNode))
+                if h-Dijkstra(graph, neighbor, destNode) > 0:
+                    print(f'overshot by {h-Dijkstra(graph, neighbor, destNode)}')
+                print(h-Dijkstra(graph, neighbor, destNode))
+                print('---')
+
                 heapq.heappush(priority_queue, (new_dist + h, neighbor))
     
   # Return the time to the destination
