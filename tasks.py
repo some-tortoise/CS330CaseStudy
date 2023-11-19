@@ -376,8 +376,8 @@ def t4():
       # #print(f'{tw2-tw1} (Dijkstra Time)')
 
       #tw1 = time.time()
-      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode)
-      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode)
+      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
+      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
       totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
 
       #tw2 = time.time()
@@ -401,14 +401,14 @@ def t4():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      printRideDetails(r, rideNumber)
-      print(f'latestDate: {latestDate}')
-      print(f'driver.datetime: {driver.datetime}')
-      print(f'passenger.datetime: {passenger.datetime}')
-      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
-      print(f'Number of drivers in queue: {len(waitingDriverList)}')
-      print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
-      rideNumber += 1
+      # printRideDetails(r, rideNumber)
+      # print(f'latestDate: {latestDate}')
+      # print(f'driver.datetime: {driver.datetime}')
+      # print(f'passenger.datetime: {passenger.datetime}')
+      # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      # print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      # print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      # rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)
