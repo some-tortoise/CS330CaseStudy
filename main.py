@@ -66,7 +66,7 @@ global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 ### RUN TASK ###
 
 # Run the profiler
-cProfile.run('t4()', sort='cumulative')
+cProfile.run('t3()', sort='cumulative')
 
 time4 = time.time()
 print(f'time for task: {time4 - time3} seconds')

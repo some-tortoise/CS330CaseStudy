@@ -244,21 +244,21 @@ def t3():
       passenger = 0
       driver = 0
       minPairwiseDist = float('inf')
-      for p in waitingPassengerList:
-        for d in waitingDriverList:
-          passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
-          driverDate = datetime.strptime(d.datetime, "%m/%d/%Y %H:%M:%S")
-          latestDate = d.datetime if passengerDate < driverDate else p.datetime
-          adjacencyList = getAdjacencyList(latestDate)
-          driverNode = grabOrCreateNode((d.lat, d.long))
-          passengerNode = grabOrCreateNode((p.sourceLat, p.sourceLong))
-          dist = Dijkstra(adjacencyList, driverNode, passengerNode)
-          if(dist < minPairwiseDist):
-            passenger = p
-            driver = d
-            minPairwiseDist = dist
 
-      waitingPassengerList.remove(passenger)
+      passengerNodeIDs = []
+      for p in waitingPassengerList:
+        passengerNodeIDs.append(grabOrCreateNode((p.sourceLat, p.sourceLong)))
+      for d in waitingDriverList:
+        driverNode = grabOrCreateSexyNode((d.lat, d.long))
+        adjacencyList = getAdjacencyList(d.datetime)
+        dist, pID = DijkstraToAll(adjacencyList, driverNode, passengerNodeIDs)
+        if(dist < minPairwiseDist):
+          passenger = pID
+          driver = d
+          minPairwiseDist = dist
+      i = passengerNodeIDs.index(pID)
+      passenger = waitingPassengerList[i]
+      del waitingPassengerList[i]
       waitingDriverList.remove(driver)
 
       #some processing
@@ -396,12 +396,12 @@ def t4():
       rideList.append(r)
 
       printRideDetails(r, rideNumber)
-      # print(f'latestDate: {latestDate}')
-      # print(f'driver.datetime: {driver.datetime}')
-      # print(f'passenger.datetime: {passenger.datetime}')
-      # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
-      # print(f'Number of drivers in queue: {len(waitingDriverList)}')
-      # print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      print(f'latestDate: {latestDate}')
+      print(f'driver.datetime: {driver.datetime}')
+      print(f'passenger.datetime: {passenger.datetime}')
+      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      print(f'time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
       rideNumber += 1
 
       #updating driver details

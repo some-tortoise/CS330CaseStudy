@@ -81,7 +81,6 @@ def BinarySearchOnDrivers(list, a):
     return mid
 
 
-
 def Astar(graph, sourceNode, destNode, dateStr): #added adj list parameter, deleted time variable from parameters
   '''
   Input:
@@ -218,3 +217,50 @@ def Astar_V2(graph, sourceNode, destNode, dateStr): #added adj list parameter, d
   # Return the time to the destination
   return timeTillPoint[destNode] #this would return distance from given source param to destNode
 
+
+def DijkstraToAll(graph, sourceNode, destNodesList): #added adj list parameter, deleted time variable from parameters
+  '''
+  Input:
+  graph (adjacency list)
+  source as node
+  dest as list of node
+
+  Output:
+  returns time it takes to get from source to closest destination
+  '''
+
+  # Initialize distances dictionary with infinity for all vertices except the source
+
+  timeTillPoint = {}
+  timeTillPoint[sourceNode] = 0
+
+  priority_queue = [(0, sourceNode)]
+  seen = set()
+
+  current_vertex = ''
+
+  while priority_queue:
+        current_distance, current_vertex  = heapq.heappop(priority_queue)
+
+        if current_vertex in seen: 
+            continue
+        seen.add(current_vertex)
+
+        if current_vertex in destNodesList:
+            break
+
+        # Iterate over neighbors of the current vertex
+        for neighbor, weight in graph[current_vertex]:
+            if neighbor in seen:
+                continue
+
+            new_dist = current_distance + weight
+            # If a shorter path is found, update the distance
+            if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
+                timeTillPoint[neighbor] = new_dist
+                heapq.heappush(priority_queue, (new_dist, neighbor))
+    
+  # Return the time to the destination
+  
+  return timeTillPoint[current_vertex], current_vertex #this would return distance from given source param to destNode
+ 
