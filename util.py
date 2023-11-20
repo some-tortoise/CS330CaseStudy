@@ -7,6 +7,36 @@ from datetime import datetime
 import global_data
 from classes import Passenger, Driver, KdNode
 
+# def findParallelClosestNode(point):
+#   '''
+#   Input:
+#   point as (lat, long)
+
+#   Output:
+#   returns a node ID
+#   '''
+#   with concurrent.futures.ThreadPoolExecutor() as executor:
+#     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
+#   print(di)
+#   # point = (float(point[0]), float(point[1]))
+
+#   # closestNode = None
+#   # with concurrent.futures.ThreadPoolExecutor() as executor:
+#   #     # Use executor.map to parallelize the computation
+#   #     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
+
+#   # minDist = min(distances)  # Find the minimum distance
+
+#   # for node in global_data.nodes:
+#   #   nodeStuff = global_data.nodes[node]
+#   #   dist = getHaversineDist(point, (float(nodeStuff['lat']), float(nodeStuff['lon'])))
+#   #   if dist < minDist:
+#   #     minDist = dist
+#   #     closestNode = node
+
+#   return closestNode
+
+
 def createAdjacencyLists():
   for i in range(0,24):
     global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
@@ -169,6 +199,28 @@ def getHaversineDist(point1, point2):
   c = 2 * math.asin(math.sqrt(a)) 
   r = 3959
   return c * r
+
+def getApproxHaversineDist(point1, point2):
+  '''
+  returns estimate of distance between two points in miles
+
+  Input
+  point1 as (lat1, long1), point2 as (lat2, long2)
+
+  '''
+  
+  # convert decimal degrees to radians 
+  lat1, lon1, lat2, lon2 = map(math.radians, [point1[0], point1[1], point2[0], point2[1]])
+
+  # haversine formula 
+  dlon = lon2 - lon1 
+  dlat = lat2 - lat1 
+
+  # using taylor series approximation to 2 terms
+  a = ((dlat/2)-((dlat/2)**3)/6)**2 + (1-(lat1**2)/2) * (1-(lat2**2)/2) * (((dlon/2)-((dlon/2)**3)/6)**2) 
+  x = math.sqrt(a)
+  cTimesR = 7918 * x+ 1319.666 * (x**3)
+  return cTimesR
 
 def findClosestNode(point):
   '''
