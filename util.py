@@ -209,7 +209,7 @@ def findClosestNode(point):
   closestNode = None
   for node in global_data.nodes:
     nodeStuff = global_data.nodes[node]
-    dist = getApproxHaversineDist(point, (float(nodeStuff['lat']), float(nodeStuff['lon'])))
+    dist = getHaversineDist(point, (nodeStuff['lat'], nodeStuff['lon']))
     if dist < minDist:
       minDist = dist
       closestNode = node
@@ -228,7 +228,7 @@ def grabOrCreateNode(point):
   node = str(findClosestNode(point))
   nodeLat = float(global_data.nodes[node]['lat'])
   nodeLong = float(global_data.nodes[node]['lon'])
-  dist = getApproxHaversineDist((nodeLat, nodeLong), (float(point[0]), float(point[1])))
+  dist = getHaversineDist((nodeLat, nodeLong), (point[0], point[1]))
   
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
@@ -263,7 +263,7 @@ def grabOrCreateSexyNode(point):
   node = str(findClosestInKD(global_data.kdroot, (float(point[0]), float(point[1])), global_data.kdroot).value[0])
   nodeLat = float(global_data.nodes[node]['lat'])
   nodeLong = float(global_data.nodes[node]['lon'])
-  dist = getApproxHaversineDist((nodeLat, nodeLong), (float(point[0]), float(point[1])))
+  dist = getHaversineDist((nodeLat, nodeLong), (point[0], point[1]))
   
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
@@ -320,6 +320,76 @@ def findClosestInKD(root, query_point, current_closest, splitter=0):
   current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
 
   #check nodes
+  rootPoint = (root.value[1], root.value[2])
+  distToRoot = getHaversineDist(query_point, rootPoint)
+  currentClosestDist = getHaversineDist(query_point, (current_closest.value[1], current_closest.value[2]))
+  if distToRoot < currentClosestDist:
+    current_closest = root
+
+  #check other subtrees if need be
+  if abs(float(query_point[splitter]) - float(rootPoint[splitter])) < currentClosestDist:
+    nextNode = root.rightNode if nextNode == root.leftNode else root.leftNode
+    current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
+  
+  return current_closest
+
+def grabOrCreateSexyNodeT5(point):
+  '''
+  Input (lat, long)
+  Output: node created or closest node if new one not needed
+  '''
+
+  if point in global_data.reversedNodes:
+    return global_data.reversedNodes[point]
+  
+  node = str(findClosestInKDT5(global_data.kdroot, (float(point[0]), float(point[1])), global_data.kdroot).value[0])
+  nodeLat = float(global_data.nodes[node]['lat'])
+  nodeLong = float(global_data.nodes[node]['lon'])
+  dist = getApproxHaversineDist((nodeLat, nodeLong), (float(point[0]), float(point[1])))
+  
+  if dist > global_data.minDistToBecomeNewNode:
+    #create new node
+    nodeId = str(random.getrandbits(32))
+    global_data.nodes[nodeId] = {'lon': point[1], 'lat' : point[0]}
+    global_data.reversedNodes[(point[0], point[1])] = nodeId
+
+    for i in range(0, 24):
+      temp = global_data.adjacencyListsWeekdays[i].get(node)
+      temp.append((nodeId, 60*(dist/20)))
+      global_data.adjacencyListsWeekdays[i].update({node : temp})
+      global_data.adjacencyListsWeekdays[i][nodeId] = [(node, (dist/20)*60)]
+
+      temp = global_data.adjacencyListsWeekends[i].get(node)
+      temp.append((nodeId, 60*(dist/20)))
+      global_data.adjacencyListsWeekends[i].update({node : temp})
+      global_data.adjacencyListsWeekends[i][nodeId] = [(node, (dist/20)*60)]
+    
+    return nodeId
+  
+  return node
+
+def findClosestInKDT5(root, query_point, current_closest, splitter=0):
+  if root is None:
+    return current_closest
+  
+  pLat, pLon = query_point
+  pLat = float(pLat)
+  pLon = float(pLon)
+  
+  if splitter == 0: # USE LAT
+    if pLat < root.value[1]:
+      nextNode = root.leftNode
+    else:
+      nextNode = root.rightNode
+  else: # USE LON
+    if pLon < root.value[2]:
+      nextNode = root.leftNode
+    else:
+      nextNode = root.rightNode
+
+  current_closest = findClosestInKDT5(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
+
+  #check nodes
   rootPoint = (float(root.value[1]), float(root.value[2]))
   distToRoot = getApproxHaversineDist(query_point, rootPoint)
   currentClosestDist = getApproxHaversineDist(query_point, (float(current_closest.value[1]), float(current_closest.value[2])))
@@ -329,6 +399,6 @@ def findClosestInKD(root, query_point, current_closest, splitter=0):
   #check other subtrees if need be
   if abs(float(query_point[splitter]) - rootPoint[splitter]) < currentClosestDist:
     nextNode = root.rightNode if nextNode == root.leftNode else root.leftNode
-    current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
+    current_closest = findClosestInKDT5(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
   
   return current_closest

@@ -489,10 +489,10 @@ def t5():
         
         p.priority = 0 if passengerWaitTime == 0 else math.log(passengerWaitTime)/10
         #print(p.priority)
-        passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))
+        passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
 
       for d in waitingDriverList:
-        driverNode = grabOrCreateSexyNode((d.lat, d.long))
+        driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
         adjacencyList = getAdjacencyList(latestDateTemp)
         dist, pID = AstarToAll_V2(adjacencyList, driverNode, passengerNodeIDs, waitingPassengerList, latestDateTemp)
         if(dist < minPairwiseDist):
@@ -517,9 +517,9 @@ def t5():
       adjacencyList = getAdjacencyList(latestDate)
       
       #calculating route details
-      driverNode = grabOrCreateSexyNode((driver.lat, driver.long)) # will return current node in graph or new created one if needed
-      passengerNode = grabOrCreateSexyNode((passenger.sourceLat, passenger.sourceLong))
-      destNode = grabOrCreateSexyNode((passenger.destLat, passenger.destLong))
+      driverNode = grabOrCreateSexyNodeT5((driver.lat, driver.long)) # will return current node in graph or new created one if needed
+      passengerNode = grabOrCreateSexyNodeT5((passenger.sourceLat, passenger.sourceLong))
+      destNode = grabOrCreateSexyNodeT5((passenger.destLat, passenger.destLong))
       
       #calculating estimated times for routes
       timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
@@ -555,4 +555,3 @@ def t5():
         finishedDrivers.append(driver)
     
   printEndStats(rideList, finishedDrivers)
-
