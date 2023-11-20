@@ -65,7 +65,7 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
 # Run the profiler (REMOVE BEFORE SUBMISSION)
-cProfile.run('t3()', sort='cumulative')
+cProfile.run('t4()', sort='cumulative')
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')
