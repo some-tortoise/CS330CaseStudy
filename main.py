@@ -92,7 +92,7 @@ def profiler(command, filename="profile.stats", n_stats=10):
     stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
     return stats.print_stats(n_stats or {})
 
-profiler('t4()', filename='profile.stats', n_stats=10)
+profiler('t1()', filename='profile.stats', n_stats=30)
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

@@ -2,7 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statistics 
 
-with open("task_results.txt", 'r') as file:
+TASK = 't1'
+
+
+with open(f"{TASK}_results.txt", 'r') as file:
     # Read the entire content of the file
     file_content = file.read()
 

@@ -97,7 +97,7 @@ def t1():
       else:
         finishedDrivers.append(driver)
     
-  printEndStats(rideList, finishedDrivers)
+  printEndStats(rideList, finishedDrivers, 't1')
 
 def t2():
   
@@ -198,7 +198,7 @@ def t2():
       else:
         finishedDrivers.append(driver)
     
-  printEndStats(rideList, finishedDrivers)
+  printEndStats(rideList, finishedDrivers, 't2')
 
 def t3():
   
@@ -311,7 +311,7 @@ def t3():
       else:
         finishedDrivers.append(driver)
     
-  printEndStats(rideList, finishedDrivers)
+  printEndStats(rideList, finishedDrivers, 't3')
 
 def t4():
   
@@ -424,7 +424,7 @@ def t4():
       else:
         finishedDrivers.append(driver)
     
-  printEndStats(rideList, finishedDrivers)
+  printEndStats(rideList, finishedDrivers, 't4')
 
 def t5():
   
@@ -554,4 +554,4 @@ def t5():
       else:
         finishedDrivers.append(driver)
     
-  printEndStats(rideList, finishedDrivers)
+  printEndStats(rideList, finishedDrivers, 't5')

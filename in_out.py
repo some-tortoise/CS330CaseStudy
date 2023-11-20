@@ -6,9 +6,6 @@ import time
 import statistics
 from classes import Driver
 
-import numpy as np  #REMOVE BEFORE SUBMISSION
-import matplotlib.pyplot as plt #REMOVE BEFORE SUBMISSION
-
 def read_csv(str):
   file = open(str)
   csvreader = csv.reader(file)
@@ -38,7 +35,7 @@ def printRideDetails(r, rideNum):
   print(f'Passenger time from hailing a ride till reaching dest (minutes): {r.passengerWaitFromAvailableTillDest}')
   print(f'Driver profit: {r.pickupToDropoffTime - r.driverToPassengerTime}')
 
-def printEndStats(rideList, finishedDrivers):
+def printEndStats(rideList, finishedDrivers, task):
   driverToPassengerTimes = [r.driverToPassengerTime for r in rideList]
   pickupToDropoffTimes = [r.pickupToDropoffTime for r in rideList]
   passengerWaitFromAvailableTillDest = [r.passengerWaitFromAvailableTillDest for r in rideList]
@@ -47,7 +44,7 @@ def printEndStats(rideList, finishedDrivers):
   passengersCarried = [d.passengersCarried for d in finishedDrivers]
   timeOnJobs = [d.timeOnJob for d in finishedDrivers]
 
-  f = open("task_results.txt", "w")
+  f = open(f"{task}_results.txt", "w")
   f.write(str(driverToPassengerTimes))
   f.write('???')
   f.write(str(pickupToDropoffTimes))
