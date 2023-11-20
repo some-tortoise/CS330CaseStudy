@@ -29,3 +29,34 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# def findParallelClosestNode(point):
+#   '''
+#   Input:
+#   point as (lat, long)
+
+#   Output:
+#   returns a node ID
+#   '''
+#   with concurrent.futures.ThreadPoolExecutor() as executor:
+#     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
+#   print(di)
+#   # point = (float(point[0]), float(point[1]))
+
+#   # closestNode = None
+#   # with concurrent.futures.ThreadPoolExecutor() as executor:
+#   #     # Use executor.map to parallelize the computation
+#   #     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
+
+#   # minDist = min(distances)  # Find the minimum distance
+
+#   # for node in global_data.nodes:
+#   #   nodeStuff = global_data.nodes[node]
+#   #   dist = getHaversineDist(point, (float(nodeStuff['lat']), float(nodeStuff['lon'])))
+#   #   if dist < minDist:
+#   #     minDist = dist
+#   #     closestNode = node
+
+#   return closestNode

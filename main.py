@@ -29,7 +29,7 @@ global_data.nodes = getNodes() # dict of nodes
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/drivers.csv')
+driverCSVarr = read_csv('./data/driverSubset.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
@@ -65,7 +65,7 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
 # Run the profiler (REMOVE BEFORE SUBMISSION)
-cProfile.run('t4()', sort='cumulative')
+cProfile.run('t3()', sort='cumulative')
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

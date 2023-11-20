@@ -7,35 +7,6 @@ from datetime import datetime
 import global_data
 from classes import Passenger, Driver, KdNode
 
-# def findParallelClosestNode(point):
-#   '''
-#   Input:
-#   point as (lat, long)
-
-#   Output:
-#   returns a node ID
-#   '''
-#   with concurrent.futures.ThreadPoolExecutor() as executor:
-#     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
-#   print(di)
-#   # point = (float(point[0]), float(point[1]))
-
-#   # closestNode = None
-#   # with concurrent.futures.ThreadPoolExecutor() as executor:
-#   #     # Use executor.map to parallelize the computation
-#   #     distances = list(executor.map(lambda item: (item[0], getApproxHaversineDist(point, (float(item['lat']), float(item['lon'])))), global_data.nodes.items()))
-
-#   # minDist = min(distances)  # Find the minimum distance
-
-#   # for node in global_data.nodes:
-#   #   nodeStuff = global_data.nodes[node]
-#   #   dist = getHaversineDist(point, (float(nodeStuff['lat']), float(nodeStuff['lon'])))
-#   #   if dist < minDist:
-#   #     minDist = dist
-#   #     closestNode = node
-
-#   return closestNode
-
 
 def createAdjacencyLists():
   for i in range(0,24):
@@ -231,12 +202,13 @@ def findClosestNode(point):
   returns a node ID
   '''
 
+  point = (float(point[0]), float(point[1]))
+
   minDist = float('Inf')
   closestNode = None
   for node in global_data.nodes:
-    nodeLong = global_data.nodes[node]['lon']
-    nodeLat = global_data.nodes[node]['lat']
-    dist = getHaversineDist(point, (nodeLat, nodeLong))
+    nodeStuff = global_data.nodes[node]
+    dist = getApproxHaversineDist(point, (float(nodeStuff['lat']), float(nodeStuff['lon'])))
     if dist < minDist:
       minDist = dist
       closestNode = node
@@ -313,7 +285,7 @@ def grabOrCreateSexyNode(point):
   
   return node
 
-def buildKD(list, dim=2, splitter=0): #BUILD KEVIN D.
+def buildKD(list, dim=2, splitter=0):
     if len(list) == 0:
       return
     if splitter == 0:
