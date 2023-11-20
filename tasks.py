@@ -1,9 +1,10 @@
 import time
 from datetime import datetime, time, timedelta
 import statistics
+import math
 
 from util import *
-from classes import *
+from classes import Ride, Driver, Passenger
 from algs import *
 from in_out import *
 import global_data
@@ -474,14 +475,26 @@ def t5():
       firstPassengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
       firstDriverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
       latestDateTemp = waitingDriverList[0].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[0].datetime
-
-      for p in waitingPassengerList:
-        passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))
       
+      
+      for p in waitingPassengerList:
+        passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
+        driverDate = datetime.strptime(waitingDriverList[-1].datetime, "%m/%d/%Y %H:%M:%S")
+        latestDate = waitingDriverList[-1].datetime if passengerDate < driverDate else p.datetime
+        passengerWaitTime = 0
+        if latestDate == waitingDriverList[-1].datetime:
+          passengerWaitTime = ((driverDate - passengerDate).total_seconds() / 60)
+        else:
+          passengerWaitTime = 0
+        
+        p.priority = 0 if passengerWaitTime == 0 else math.log(passengerWaitTime)/10
+        #print(p.priority)
+        passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))
+
       for d in waitingDriverList:
         driverNode = grabOrCreateSexyNode((d.lat, d.long))
         adjacencyList = getAdjacencyList(latestDateTemp)
-        dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
+        dist, pID = AstarToAll_V2(adjacencyList, driverNode, passengerNodeIDs, waitingPassengerList, latestDateTemp)
         if(dist < minPairwiseDist):
           passenger = pID
           driver = d
@@ -490,11 +503,10 @@ def t5():
       i = passengerNodeIDs.index(pID)
       passenger = waitingPassengerList[i]
 
-      
-      # if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
-      #   break
-      
-      
+      if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
+        break
+
+
       del waitingPassengerList[i]
       waitingDriverList.remove(driver)
 
