@@ -1,2 +1,7 @@
 1. Use Fibonacci Heap in Dijkstra ??
 2. Look into Differential Heurisitcs
+3. Look into checking if KD tree is balanced
+4. Measure A* overshoot and accuracy
+5. Measure A* v2 accuracy and A* to all (think it is the same)
+6. Show approx haversine is good
+7. Show findClosestInKD returns approximately close node. Measure accuracy?

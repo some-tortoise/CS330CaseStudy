@@ -258,3 +258,87 @@ def Astar_V2(graph, sourceNode, destNode, dateStr): #added time variable from pa
   
   # Return the time to the destination
   return timeTillPoint[destNode] #returns estimated time from given source param to destNode
+
+def AstarToAll(graph, sourceNode, destNodes, dateStr): #added time variable from parameters
+  '''
+  Input:
+  graph (adjacency list)
+  source as node
+  dest as node
+
+  Output:
+  returns time it takes to get from source to destination
+  '''
+
+  timeTillPoint = {}
+  timeTillPoint[sourceNode] = 0
+
+  hour = int(dateStr.split()[1][0:2])
+  avgSpeed = 0
+  date = datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
+  if date.weekday() < 5:
+    avgSpeed = global_data.avgSpeedList[hour]
+  else:
+    avgSpeed = global_data.avgSpeedList[hour + 24]
+
+  const1 = (69.09 * 60)/(avgSpeed * 1.5) # (69.09 (miles per degree of latitude) / 1.5*avgSpeed in miles per hour) * 60 (hours to minutes)
+  const2 = (51.34 * 60)/(avgSpeed * 1.5) # (51.34 (miles per degree of longitude) / 1.5*avgSpeed in miles per hour) * 60 (hours to minutes)
+
+  s = global_data.nodes[sourceNode]
+  lat1 = float(s['lat'])
+  lon1 = float(s['lon'])
+  minH = float('inf')
+  for destNode in destNodes:
+    d = global_data.nodes[destNode]
+    lat2 = float(d['lat'])
+    lon2 = float(d['lon'])
+    dist1 = abs(lat1-lat2)*const1
+    dist2 = abs(lon1-lon2)*const2
+    if dist1+dist2 < minH:
+        minH = dist1+dist2
+
+
+  priority_queue = [(minH, sourceNode)] # (f, node) 
+  seen = set()
+
+  while priority_queue:
+        f, current_vertex  = heapq.heappop(priority_queue)
+        current_distance = timeTillPoint[current_vertex]
+
+        if current_vertex in seen: 
+            continue
+        seen.add(current_vertex)
+
+        if current_vertex in destNodes:
+            break
+        
+        # Iterate over neighbors of the current vertex
+        for neighbor, weight in graph[current_vertex]:
+            if neighbor in seen:
+                continue
+
+            new_dist = current_distance + weight
+            # If a shorter path is found, update the distance
+            if neighbor not in timeTillPoint or timeTillPoint[neighbor] > new_dist:
+                timeTillPoint[neighbor] = new_dist
+                
+                temp = global_data.nodes[neighbor]
+                #f = abs(float(temp['lat'])-lat2)*const1+abs(float(temp['lon'])-lon2)*const2 # does not inclue new_dist
+
+                lat1 = float(temp['lat'])
+                lon1 = float(temp['lon'])
+                minH = float('inf')
+                for destNode in destNodes:
+                    d = global_data.nodes[destNode]
+                    lat2 = float(d['lat'])
+                    lon2 = float(d['lon'])
+                    dist1 = abs(lat1-lat2)*const1
+                    dist2 = abs(lon1-lon2)*const2
+                    if dist1+dist2 < minH:
+                        minH = dist1+dist2
+                heapq.heappush(priority_queue, (minH, neighbor))
+  
+  # Return the time to the destination
+  return timeTillPoint[current_vertex], current_vertex #returns estimated time from given source param to destNode
+
+

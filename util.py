@@ -187,9 +187,10 @@ def getApproxHaversineDist(point1, point2):
   dlon = lon2 - lon1 
   dlat = lat2 - lat1 
 
-  # using taylor series approximation to 2 terms
-  a = ((dlat/2)-((dlat/2)**3)/6)**2 + (1-(lat1**2)/2) * (1-(lat2**2)/2) * (((dlon/2)-((dlon/2)**3)/6)**2) 
+  # using taylor series approximation to 3 terms
+  a = ((dlat/2)-((dlat/2)**3)/6 + ((dlat/2)**5)/120)**2 + (1-(lat1**2)/2 + (lat1**4)/24) * (1-(lat2**2)/2 + (lat2**4)/24) * (((dlon/2)-((dlon/2)**3)/6 + ((dlon/2)**5)/120)**2) 
   x = math.sqrt(a)
+  # using taylor series approximation to 2 terms
   cTimesR = 7918 * x+ 1319.666 * (x**3)
   return cTimesR
 
@@ -258,8 +259,8 @@ def grabOrCreateSexyNode(point):
 
   if point in global_data.reversedNodes:
     return global_data.reversedNodes[point]
-
-  node = str(findClosestInKD(global_data.kdroot, point, global_data.kdroot).value[0])
+  
+  node = str(findClosestInKD(global_data.kdroot, (float(point[0]), float(point[1])), global_data.kdroot).value[0])
   nodeLat = global_data.nodes[node]['lat']
   nodeLong = global_data.nodes[node]['lon']
   dist = getHaversineDist((nodeLat, nodeLong), point)
@@ -319,9 +320,9 @@ def findClosestInKD(root, query_point, current_closest, splitter=0):
   current_closest = findClosestInKD(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
 
   #check nodes
-  rootPoint = (root.value[1], root.value[2])
-  distToRoot = getManhattanDist(query_point, rootPoint)
-  currentClosestDist = getManhattanDist(query_point, (current_closest.value[1], current_closest.value[2]))
+  rootPoint = (float(root.value[1]), float(root.value[2]))
+  distToRoot = getApproxHaversineDist(query_point, rootPoint)
+  currentClosestDist = getApproxHaversineDist(query_point, (float(current_closest.value[1]), float(current_closest.value[2])))
   if distToRoot < currentClosestDist:
     current_closest = root
 

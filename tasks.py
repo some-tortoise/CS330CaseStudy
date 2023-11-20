@@ -245,12 +245,16 @@ def t3():
       minPairwiseDist = float('inf')
       passengerNodeIDs = []
 
+      passengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      driverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      latestDateTemp = waitingDriverList[0].datetime if passengerDate < driverDate else waitingPassengerList[0].datetime
+
       for p in waitingPassengerList:
         passengerNodeIDs.append(grabOrCreateNode((p.sourceLat, p.sourceLong)))
       
       for d in waitingDriverList:
         driverNode = grabOrCreateNode((d.lat, d.long))
-        adjacencyList = getAdjacencyList(d.datetime)
+        adjacencyList = getAdjacencyList(latestDateTemp)
         dist, pID = DijkstraToAll(adjacencyList, driverNode, passengerNodeIDs)
         if(dist < minPairwiseDist):
           passenger = pID
@@ -352,22 +356,27 @@ def t4():
       passenger = 0
       driver = 0
       minPairwiseDist = float('inf')
+      passengerNodeIDs = []
+
+      passengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      driverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      latestDateTemp = waitingDriverList[0].datetime if passengerDate < driverDate else waitingPassengerList[0].datetime
 
       for p in waitingPassengerList:
-        passengerNode = grabOrCreateSexyNode((p.sourceLat, p.sourceLong))
-        passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
-        for d in waitingDriverList:
-          driverDate = datetime.strptime(d.datetime, "%m/%d/%Y %H:%M:%S")
-          latestDate = d.datetime if passengerDate < driverDate else p.datetime
-          adjacencyList = getAdjacencyList(latestDate)
-          driverNode = grabOrCreateSexyNode((d.lat, d.long))
-          dist = Astar(adjacencyList, driverNode, passengerNode, latestDate)
-          if(dist < minPairwiseDist):
-            passenger = p
-            driver = d
-            minPairwiseDist = dist
+        passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))
+      
+      for d in waitingDriverList:
+        driverNode = grabOrCreateSexyNode((d.lat, d.long))
+        adjacencyList = getAdjacencyList(latestDateTemp)
+        dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
+        if(dist < minPairwiseDist):
+          passenger = pID
+          driver = d
+          minPairwiseDist = dist
 
-      waitingPassengerList.remove(passenger)
+      i = passengerNodeIDs.index(pID)
+      passenger = waitingPassengerList[i]
+      del waitingPassengerList[i]
       waitingDriverList.remove(driver)
 
       #some processing
@@ -396,14 +405,14 @@ def t4():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      printRideDetails(r, rideNumber)
-      print(f'Latest date: {latestDate}')
-      print(f'Driver datetime: {driver.datetime}')
-      print(f'Passenger datetime: {passenger.datetime}')
-      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
-      print(f'Number of drivers in queue: {len(waitingDriverList)}')
-      print(f'Time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
-      rideNumber += 1
+      # printRideDetails(r, rideNumber)
+      # print(f'Latest date: {latestDate}')
+      # print(f'Driver datetime: {driver.datetime}')
+      # print(f'Passenger datetime: {passenger.datetime}')
+      # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      # print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      # print(f'Time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      # rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)
@@ -415,3 +424,4 @@ def t4():
         finishedDrivers.append(driver)
     
   printEndStats(rideList, finishedDrivers)
+
