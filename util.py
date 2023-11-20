@@ -226,9 +226,9 @@ def grabOrCreateNode(point):
     return global_data.reversedNodes[point]
   
   node = str(findClosestNode(point))
-  nodeLat = global_data.nodes[node]['lat']
-  nodeLong = global_data.nodes[node]['lon']
-  dist = getApproxHaversineDist((nodeLat, nodeLong), point)
+  nodeLat = float(global_data.nodes[node]['lat'])
+  nodeLong = float(global_data.nodes[node]['lon'])
+  dist = getApproxHaversineDist((nodeLat, nodeLong), (float(point[0]), float(point[1])))
   
   if dist > global_data.minDistToBecomeNewNode:
     #create new node
@@ -261,9 +261,9 @@ def grabOrCreateSexyNode(point):
     return global_data.reversedNodes[point]
   
   node = str(findClosestInKD(global_data.kdroot, (float(point[0]), float(point[1])), global_data.kdroot).value[0])
-  nodeLat = global_data.nodes[node]['lat']
-  nodeLong = global_data.nodes[node]['lon']
-  dist = getApproxHaversineDist((nodeLat, nodeLong), point)
+  nodeLat = float(global_data.nodes[node]['lat'])
+  nodeLong = float(global_data.nodes[node]['lon'])
+  dist = getApproxHaversineDist((nodeLat, nodeLong), (float(point[0]), float(point[1])))
   
   if dist > global_data.minDistToBecomeNewNode:
     #create new node

@@ -405,14 +405,14 @@ def t4():
       r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
       rideList.append(r)
 
-      # printRideDetails(r, rideNumber)
-      # print(f'Latest date: {latestDate}')
-      # print(f'Driver datetime: {driver.datetime}')
-      # print(f'Passenger datetime: {passenger.datetime}')
-      # print(f'Number of passengers in queue: {len(waitingPassengerList)}')
-      # print(f'Number of drivers in queue: {len(waitingDriverList)}')
-      # print(f'Time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
-      # rideNumber += 1
+      printRideDetails(r, rideNumber)
+      print(f'Latest date: {latestDate}')
+      print(f'Driver datetime: {driver.datetime}')
+      print(f'Passenger datetime: {passenger.datetime}')
+      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      print(f'Time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      rideNumber += 1
 
       #updating driver details
       driver = updateDriverDetails(driver, r, latestDate)

@@ -29,7 +29,7 @@ global_data.nodes = getNodes() # dict of nodes
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/driverSubset.csv')
+driverCSVarr = read_csv('./data/drivers.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
