@@ -358,9 +358,9 @@ def t4():
       minPairwiseDist = float('inf')
       passengerNodeIDs = []
 
-      passengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
-      driverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
-      latestDateTemp = waitingDriverList[0].datetime if passengerDate < driverDate else waitingPassengerList[0].datetime
+      firstPassengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      firstDriverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      latestDateTemp = waitingDriverList[0].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[0].datetime
 
       for p in waitingPassengerList:
         passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))

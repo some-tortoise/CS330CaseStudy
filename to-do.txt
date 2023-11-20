@@ -5,3 +5,4 @@
 5. Measure A* v2 accuracy and A* to all (think it is the same)
 6. Show approx haversine is good
 7. Show findClosestInKD returns approximately close node. Measure accuracy?
+8. 
