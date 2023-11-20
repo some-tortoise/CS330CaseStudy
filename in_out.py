@@ -6,9 +6,8 @@ import time
 import statistics
 from classes import Driver
 
-import numpy as np 
-import matplotlib.pyplot as plt
-from scipy.stats import norm 
+import numpy as np  #REMOVE BEFORE SUBMISSION
+import matplotlib.pyplot as plt #REMOVE BEFORE SUBMISSION
 
 def read_csv(str):
   file = open(str)
@@ -48,50 +47,18 @@ def printEndStats(rideList, finishedDrivers):
   passengersCarried = [d.passengersCarried for d in finishedDrivers]
   timeOnJobs = [d.timeOnJob for d in finishedDrivers]
 
-  fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(8, 8))
-  
-  plt.subplot(2, 3, 1)
-  plt.title('driverToPassengerTimes per ride')
-  plt.xlabel('time in min')
-  plt.ylabel('% of rides')
-  plt.hist(driverToPassengerTimes, density=True, bins=np.arange(min(driverToPassengerTimes), max(driverToPassengerTimes) + 1, 1)) 
-
-  plt.subplot(2, 3, 2)
-  plt.title('pickupToDropoffTimes per ride')
-  plt.xlabel('time in min')
-  plt.ylabel('% of rides')
-  plt.hist(pickupToDropoffTimes, density=True, bins=np.arange(min(pickupToDropoffTimes), max(pickupToDropoffTimes) + 1, 1)) 
-  
-  plt.subplot(2, 3, 3)
-  plt.title('passengerWaitFromAvailableTillDest per ride')
-  plt.xlabel('number of passengers')
-  plt.ylabel('ride density')
-  plt.hist(passengerWaitFromAvailableTillDest, density=True, bins=50) 
-  
-  plt.subplot(2, 3, 4)
-  plt.title('driverProfits per driver')
-  plt.xlabel('time in min')
-  plt.ylabel('driver density')
-  plt.hist(driverProfits, density=True, bins=50) 
-  
-  plt.subplot(2, 3, 5)
-  plt.title('passengersCarried per driver')
-  plt.xlabel('time in min')
-  plt.ylabel('% of drivers')
-  plt.hist(passengersCarried, density=True, bins=np.arange(min(passengersCarried), max(passengersCarried) + 1, 1)) 
-  
-  plt.subplot(2, 3, 6)
-  plt.title('timeOnJobs per driver')
-  plt.xlabel('time in min')
-  plt.ylabel('driver density')
-  plt.hist(timeOnJobs, density=True, bins=50) 
-  
-  fig.tight_layout()
-  plt.show() 
-
-  f = open("t1results.txt", "a")
-  f.write(driverToPassengerTimes)
-
+  f = open("task_results.txt", "w")
+  f.write(str(driverToPassengerTimes))
+  f.write('???')
+  f.write(str(pickupToDropoffTimes))
+  f.write('???')
+  f.write(str(passengerWaitFromAvailableTillDest))
+  f.write('???')
+  f.write(str(driverProfits))
+  f.write('???')
+  f.write(str(passengersCarried))
+  f.write('???')
+  f.write(str(timeOnJobs))
   f.close()
 
   print('--------------------------------------------------------------------------------')

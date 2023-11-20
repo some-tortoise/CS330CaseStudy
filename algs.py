@@ -360,5 +360,3 @@ def AstarToAll_V2(graph, sourceNode, nodeIDs, destNodes, dateStr): #added time v
   # Return the time to the destination
   return timeTillPoint[current_vertex], current_vertex #returns estimated time from given source param to destNode
 
-
-

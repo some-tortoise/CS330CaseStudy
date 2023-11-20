@@ -6,6 +6,7 @@ import heapq
 import time
 import statistics
 import cProfile   #REMOVE BEFORE SUBMISSION
+import pstats #REMOVE BEFORE SUBMISSION
 
 
 
@@ -29,7 +30,7 @@ global_data.nodes = getNodes() # dict of nodes
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/drivers.csv')
+driverCSVarr = read_csv('./data/driverSubset.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
@@ -65,7 +66,33 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
 # Run the profiler (REMOVE BEFORE SUBMISSION)
-cProfile.run('t4()', sort='cumulative')
+#cProfile.run('t4()', sort='cumulative')
+
+def profiler(command, filename="profile.stats", n_stats=10):
+    """Profiler for a python program
+
+    Runs cProfile and outputs ordered statistics that describe
+    how often and for how long various parts of the program are executed.
+
+    Stats can be visualized with `!snakeviz profile.stats`.
+
+    Parameters
+    ----------
+    command: str
+        Command string to be executed.
+    filename: str
+        Name under which to store the stats.
+    n_stats: int or None
+        Number of top stats to show.
+    """
+    import cProfile
+    import pstats
+
+    cProfile.run(command, filename)
+    stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
+    return stats.print_stats(n_stats or {})
+
+profiler('t4()', filename='profile.stats', n_stats=10)
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')
