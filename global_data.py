@@ -9,3 +9,4 @@ adjacencyListsWeekends = [0]*24
 kdroot = ''
 
 minDistToBecomeNewNode = 0.0
+reasonableMatchDist = 20

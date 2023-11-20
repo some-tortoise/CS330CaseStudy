@@ -13,7 +13,7 @@ import cProfile   #REMOVE BEFORE SUBMISSION
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4 #utility functions
+from tasks import t1, t2, t3, t4, t5 #utility functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -65,7 +65,7 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 ### RUN TASK ###
 
 # Run the profiler (REMOVE BEFORE SUBMISSION)
-cProfile.run('t4()', sort='cumulative')
+cProfile.run('t5()', sort='cumulative')
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

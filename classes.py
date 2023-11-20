@@ -1,13 +1,14 @@
 from datetime import datetime
 
 class Passenger:
-  def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting):
+  def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting, priority=0):
     self.datetime = datetime
     self.sourceLat = sourceLat
     self.sourceLong = sourceLong
     self.destLat = destLat
     self.destLong = destLong
     self.timeWaiting = timeWaiting
+    self.priority = priority
 
 class Driver:
   def __init__(self, datetime, lat, long, timeOnJob, passengersCarried, driverProfit):

@@ -425,3 +425,122 @@ def t4():
     
   printEndStats(rideList, finishedDrivers)
 
+def t5():
+  
+  waitingPassengerList = []
+  waitingDriverList = []
+  rideList = []
+  finishedDrivers = []
+  rideNumber = 1
+
+  while (len(global_data.passengers) or len(waitingPassengerList)) and (len(global_data.drivers) or len(waitingDriverList)) and (len(global_data.passengers) or len(global_data.drivers)):
+
+    if len(global_data.passengers) and len(global_data.drivers):
+      passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+      driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+      if passengerDate == driverDate:
+        pArr = getPassengersWithShortDate(passengerDate)
+        for p in pArr:
+          waitingPassengerList.append(p)
+        dArr = getDriversWithShortDate(driverDate)
+        for d in dArr:
+          waitingDriverList.append(d)
+      elif passengerDate < driverDate:
+        pArr = getPassengersWithShortDate(passengerDate)
+        for p in pArr:
+          waitingPassengerList.append(p)
+      else:
+        dArr = getDriversWithShortDate(driverDate)
+        for d in dArr:
+          waitingDriverList.append(d)
+    elif len(global_data.passengers) and not len(global_data.drivers):
+      passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+      pArr = getPassengersWithShortDate(passengerDate)
+      for p in pArr:
+        waitingPassengerList.append(p)
+    elif not len(global_data.passengers) and len(global_data.drivers):
+      driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+      dArr = getDriversWithShortDate(driverDate)
+      for d in dArr:
+        waitingDriverList.append(d)
+
+    while len(waitingPassengerList) > 0 and len(waitingDriverList) > 0:
+      #match passenger to driver
+      passenger = 0
+      driver = 0
+      minPairwiseDist = float('inf')
+      passengerNodeIDs = []
+
+      firstPassengerDate = datetime.strptime(waitingPassengerList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      firstDriverDate = datetime.strptime(waitingDriverList[0].datetime, "%m/%d/%Y %H:%M:%S")
+      latestDateTemp = waitingDriverList[0].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[0].datetime
+
+      for p in waitingPassengerList:
+        passengerNodeIDs.append(grabOrCreateSexyNode((p.sourceLat, p.sourceLong)))
+      
+      for d in waitingDriverList:
+        driverNode = grabOrCreateSexyNode((d.lat, d.long))
+        adjacencyList = getAdjacencyList(latestDateTemp)
+        dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
+        if(dist < minPairwiseDist):
+          passenger = pID
+          driver = d
+          minPairwiseDist = dist
+
+      i = passengerNodeIDs.index(pID)
+      passenger = waitingPassengerList[i]
+
+      
+      # if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
+      #   break
+      
+      
+      del waitingPassengerList[i]
+      waitingDriverList.remove(driver)
+
+      #some processing
+      passengerDate = datetime.strptime(passenger.datetime, "%m/%d/%Y %H:%M:%S")
+      driverDate = datetime.strptime(driver.datetime, "%m/%d/%Y %H:%M:%S")
+      latestDate = driver.datetime if passengerDate < driverDate else passenger.datetime
+      adjacencyList = getAdjacencyList(latestDate)
+      
+      #calculating route details
+      driverNode = grabOrCreateSexyNode((driver.lat, driver.long)) # will return current node in graph or new created one if needed
+      passengerNode = grabOrCreateSexyNode((passenger.sourceLat, passenger.sourceLong))
+      destNode = grabOrCreateSexyNode((passenger.destLat, passenger.destLong))
+      
+      #calculating estimated times for routes
+      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
+      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
+      totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
+
+      #saving ride details
+      passengerWaitFromAvailableTillDest = 0
+      if latestDate == driver.datetime:
+        passengerWaitFromAvailableTillDest = ((driverDate - passengerDate).total_seconds() / 60) + totalTimeInMin
+      else:
+        passengerWaitFromAvailableTillDest = totalTimeInMin
+
+      r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
+      rideList.append(r)
+
+      printRideDetails(r, rideNumber)
+      print(f'Latest date: {latestDate}')
+      print(f'Driver datetime: {driver.datetime}')
+      print(f'Passenger datetime: {passenger.datetime}')
+      print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+      print(f'Number of drivers in queue: {len(waitingDriverList)}')
+      print(f'Time between: {((abs(driverDate - passengerDate)).total_seconds() / 60)}')
+      rideNumber += 1
+
+      #updating driver details
+      driver = updateDriverDetails(driver, r, latestDate)
+
+      if not driver.isDoneWithWork():
+        i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
+        global_data.drivers.insert(i, driver)
+      else:
+        finishedDrivers.append(driver)
+    
+  printEndStats(rideList, finishedDrivers)
+
