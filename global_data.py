@@ -10,3 +10,6 @@ kdroot = ''
 
 minDistToBecomeNewNode = 0.0
 reasonableMatchDist = 40
+
+center = (40.7054378, -73.9778828)
+clusterRange = 30

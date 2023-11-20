@@ -442,14 +442,17 @@ def t5():
       if passengerDate == driverDate:
         pArr = getPassengersWithShortDate(passengerDate)
         for p in pArr:
-          waitingPassengerList.append(p)
+          if passengerInRange(p):
+            waitingPassengerList.append(p)
         dArr = getDriversWithShortDate(driverDate)
         for d in dArr:
           waitingDriverList.append(d)
       elif passengerDate < driverDate:
         pArr = getPassengersWithShortDate(passengerDate)
         for p in pArr:
-          waitingPassengerList.append(p)
+          if passengerInRange(p):
+            waitingPassengerList.append(p)
+          
       else:
         dArr = getDriversWithShortDate(driverDate)
         for d in dArr:
@@ -458,7 +461,8 @@ def t5():
       passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
       pArr = getPassengersWithShortDate(passengerDate)
       for p in pArr:
-        waitingPassengerList.append(p)
+        if passengerInRange(p):
+          waitingPassengerList.append(p)
     elif not len(global_data.passengers) and len(global_data.drivers):
       driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
       dArr = getDriversWithShortDate(driverDate)
@@ -487,7 +491,7 @@ def t5():
         else:
           passengerWaitTime = 0
         
-        p.priority = 0 if passengerWaitTime == 0 else math.log(passengerWaitTime)/10
+        #p.priority = 0 if passengerWaitTime == 0 else math.log(passengerWaitTime)/10
         #print(p.priority)
         passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
 
@@ -503,8 +507,8 @@ def t5():
       i = passengerNodeIDs.index(pID)
       passenger = waitingPassengerList[i]
 
-      if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
-        break
+      # if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
+      #   break
 
 
       del waitingPassengerList[i]
@@ -555,3 +559,4 @@ def t5():
         finishedDrivers.append(driver)
     
   printEndStats(rideList, finishedDrivers, 't5')
+

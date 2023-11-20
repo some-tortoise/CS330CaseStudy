@@ -30,7 +30,7 @@ global_data.nodes = getNodes() # dict of nodes
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/driverSubset.csv')
+driverCSVarr = read_csv('./data/drivers.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
@@ -92,7 +92,7 @@ def profiler(command, filename="profile.stats", n_stats=10):
     stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
     return stats.print_stats(n_stats or {})
 
-profiler('t1()', filename='profile.stats', n_stats=30)
+profiler('t4()', filename='profile.stats', n_stats=30)
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

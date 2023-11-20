@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statistics 
 
-TASK = 't1'
+TASK = 't4'
 
 
 with open(f"{TASK}_results.txt", 'r') as file:
@@ -22,37 +22,37 @@ fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(8, 8))
 
 plt.subplot(2, 3, 1)
 plt.title('driverToPassengerTimes per ride')
-plt.xlabel('time in min')
+plt.xlabel('time (min)')
 plt.ylabel('% of rides')
 plt.hist(driverToPassengerTimes, density=True, bins=np.arange(min(driverToPassengerTimes), max(driverToPassengerTimes) + 1, 1)) 
 
 plt.subplot(2, 3, 2)
 plt.title('pickupToDropoffTimes per ride')
-plt.xlabel('time in min')
+plt.xlabel('time (min)')
 plt.ylabel('% of rides')
 plt.hist(pickupToDropoffTimes, density=True, bins=np.arange(min(pickupToDropoffTimes), max(pickupToDropoffTimes) + 1, 1)) 
 
 plt.subplot(2, 3, 3)
 plt.title('passengerWaitFromAvailableTillDest per ride')
-plt.xlabel('number of passengers')
+plt.xlabel('time (min)')
 plt.ylabel('ride density')
 plt.hist(passengerWaitFromAvailableTillDest, density=True, bins=50) 
 
 plt.subplot(2, 3, 4)
 plt.title('driverProfits per driver')
-plt.xlabel('time in min')
+plt.xlabel('time (min)')
 plt.ylabel('driver density')
 plt.hist(driverProfits, density=True, bins=50) 
 
 plt.subplot(2, 3, 5)
 plt.title('passengersCarried per driver')
-plt.xlabel('time in min')
+plt.xlabel('# of passengers')
 plt.ylabel('% of drivers')
-plt.hist(passengersCarried, density=True, bins=np.arange(min(passengersCarried), max(passengersCarried) + 1, 1)) 
+plt.hist(passengersCarried, density=True, bins=15) 
 
 plt.subplot(2, 3, 6)
 plt.title('timeOnJobs per driver')
-plt.xlabel('time in min')
+plt.xlabel('time (min)')
 plt.ylabel('driver density')
 plt.hist(timeOnJobs, density=True, bins=50) 
 

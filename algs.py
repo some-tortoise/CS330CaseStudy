@@ -355,7 +355,7 @@ def AstarToAll_V2(graph, sourceNode, nodeIDs, destNodes, dateStr): #added time v
                     if (dist1 + dist2 - nodePriority) < minH:
                         minH = dist1 + dist2 - nodePriority
                 
-                heapq.heappush(priority_queue, (new_dist + minH, neighbor))
+                heapq.heappush(priority_queue, (minH, neighbor))
   
   # Return the time to the destination
   return timeTillPoint[current_vertex], current_vertex #returns estimated time from given source param to destNode

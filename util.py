@@ -402,3 +402,16 @@ def findClosestInKDT5(root, query_point, current_closest, splitter=0):
     current_closest = findClosestInKDT5(nextNode, query_point, current_closest, splitter=(splitter+1)%2)
   
   return current_closest
+
+def passengerInRange(p):
+  point1 = (float(p.sourceLat), float(p.sourceLong))
+  if getHaversineDist(point1,global_data.center) > global_data.clusterRange:
+    return False
+  
+  point2 = (float(p.destLat), float(p.destLong))
+  if getHaversineDist(point2,global_data.center) > global_data.clusterRange:
+    return False
+  
+  return True
+
+
