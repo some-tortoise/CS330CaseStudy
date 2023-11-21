@@ -56,12 +56,15 @@ for key, val in global_data.nodes.items():
     global_data.reversedNodes[(global_data.nodes[key]['lat'], global_data.nodes[key]['lon'])] = key
     initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
 
+#ONLY FOR T4 and T5
 global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 
 time3 = time.time()
 print(f'Time for preprocessing: {time3 - time2} seconds')
 
+#ONLY FOR T5
 global_data.clusters = initializeClusters()
+
 
 ### RUN TASK ###
 
@@ -96,4 +99,3 @@ profiler('t5Clusters()', filename='profile.stats', n_stats=30)
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')
-

@@ -272,4 +272,3 @@ def AstarToAll(graph, sourceNode, destNodes, dateStr): #added time variable from
   
   # Return the time to the destination
   return timeTillPoint[current_vertex], current_vertex #returns estimated time from given source param to destNode
-

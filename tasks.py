@@ -610,7 +610,7 @@ def t5Clusters():
   finishedDrivers = []
   rideNumber = 1
 
-  while (global_data.passengers and global_data.clusters.someClusterHasDrivers()) or (global_data.drivers and global_data.clusters.someClusterHasPassengers()):
+  while (global_data.passengers or global_data.clusters.someClusterHasPassengers()) and (global_data.drivers or global_data.clusters.someClusterHasDrivers())  and (len(global_data.passengers) or len(global_data.drivers)):
 
     addNextInPassengersAndOrDriversT5Clusters()
 

@@ -1,4 +1,6 @@
 from datetime import datetime
+import global_data
+from util import *
 
 class Cluster:
   def __init__(self, passengerList, driverList, clusterPoint):
@@ -11,13 +13,29 @@ class Clusters:
     self.clusterList = clusterList
   
   def findClusterForPoint(self, point):
-    return self.clusterList[0]
+    lat, lon = point
+    minDist = float('inf')
+    i = 0
+    clusterChosen = i
+    for clusterPoint in global_data.clusterPoints:
+      clusterDist = getApproxHaversineDist(clusterPoint, (float(lat), float(lon)))
+      if clusterDist < minDist:
+        minDist = clusterDist
+        clusterChosen = i
+        i += 1
+    return self.clusterList[clusterChosen]
   
   def someClusterHasPassengers(self):
-    return True
+    for cluster in global_data.clusters:
+      if (len(cluster.passengerList)):
+        return True
+    return False
   
   def someClusterHasDrivers(self):
-    return True
+    for cluster in global_data.clusters:
+      if (len(cluster.driverList)):
+        return True
+    return False
   
 class Passenger:
   def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting, priority=0):
@@ -65,4 +83,3 @@ class KdNode(object):
       self.leftNode = leftNode
       self.rightNode = rightNode
       self.splitter = splitter
-
