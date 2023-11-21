@@ -482,23 +482,12 @@ def t5():
       
       
       for p in waitingPassengerList:
-        passengerDate = datetime.strptime(p.datetime, "%m/%d/%Y %H:%M:%S")
-        driverDate = datetime.strptime(waitingDriverList[-1].datetime, "%m/%d/%Y %H:%M:%S")
-        latestDate = waitingDriverList[-1].datetime if passengerDate < driverDate else p.datetime
-        passengerWaitTime = 0
-        if latestDate == waitingDriverList[-1].datetime:
-          passengerWaitTime = ((driverDate - passengerDate).total_seconds() / 60)
-        else:
-          passengerWaitTime = 0
-        
-        #p.priority = 0 if passengerWaitTime == 0 else math.log(passengerWaitTime)/10
-        #print(p.priority)
         passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
 
       for d in waitingDriverList:
         driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
         adjacencyList = getAdjacencyList(latestDateTemp)
-        dist, pID = AstarToAll_V2(adjacencyList, driverNode, passengerNodeIDs, waitingPassengerList, latestDateTemp)
+        dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
         if(dist < minPairwiseDist):
           passenger = pID
           driver = d
@@ -506,9 +495,6 @@ def t5():
 
       i = passengerNodeIDs.index(pID)
       passenger = waitingPassengerList[i]
-
-      # if getApproxHaversineDist((float(passenger.sourceLat), float(passenger.sourceLong)), (float(driver.lat), float(driver.long))) > global_data.reasonableMatchDist:
-      #   break
 
 
       del waitingPassengerList[i]
@@ -560,3 +546,59 @@ def t5():
     
   printEndStats(rideList, finishedDrivers, 't5')
 
+
+def t5Clean():
+
+  waitingPassengerList = []
+  waitingDriverList = []
+  rideList = []
+  finishedDrivers = []
+  rideNumber = 1
+
+  while (global_data.passengers or waitingPassengerList) and (global_data.drivers or waitingDriverList):
+
+    waitingPassengerList, waitingDriverList = addNextInPassengersAndOrDrivers(waitingPassengerList, waitingDriverList)
+
+    while waitingPassengerList and waitingDriverList:
+      
+      #matching passenger and driver
+      passenger, driver, waitingPassengerList, waitingDriverList = matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList)
+
+      #some processing
+      latestDate = driver.datetime if passenger.datetimeAsDatetime() < driver.datetimeAsDatetime() else passenger.datetime
+      adjacencyList = getAdjacencyList(latestDate)
+      
+      #calculating route details
+      driverNode = grabOrCreateSexyNodeT5((driver.lat, driver.long)) # will return current node in graph or new created one if needed
+      passengerNode = grabOrCreateSexyNodeT5((passenger.sourceLat, passenger.sourceLong))
+      destNode = grabOrCreateSexyNodeT5((passenger.destLat, passenger.destLong))
+      
+      #calculating estimated times for routes
+      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
+      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
+      totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
+
+      #saving ride details
+      passengerWaitFromAvailableTillDest = 0
+      if latestDate == driver.datetime:
+        passengerWaitFromAvailableTillDest = ((driver.datetimeAsDatetime() - passenger.datetimeAsDatetime()).total_seconds() / 60) + totalTimeInMin
+      else:
+        passengerWaitFromAvailableTillDest = totalTimeInMin
+
+      r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
+      rideList.append(r)
+
+      printRideDetails(r, rideNumber)
+      rideNumber += 1
+
+      #updating driver details
+      driver = updateDriverDetails(driver, r, latestDate)
+
+      # remove driver if done otherwise add back to list
+      if driver.isDoneWithWork():
+        finishedDrivers.append(driver)
+      else:
+        i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
+        global_data.drivers.insert(i, driver)
+    
+  printEndStats(rideList, finishedDrivers, 't5')

@@ -14,7 +14,7 @@ import pstats #REMOVE BEFORE SUBMISSION
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4, t5 #utility functions
+from tasks import t1, t2, t3, t4, t5, t5Clean #utility functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -92,7 +92,7 @@ def profiler(command, filename="profile.stats", n_stats=10):
     stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
     return stats.print_stats(n_stats or {})
 
-profiler('t4()', filename='profile.stats', n_stats=30)
+profiler('t5Clean()', filename='profile.stats', n_stats=30)
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

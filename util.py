@@ -6,6 +6,7 @@ from datetime import datetime
 
 import global_data
 from classes import Passenger, Driver, KdNode
+from algs import AstarToAll
 
 
 def createAdjacencyLists():
@@ -95,18 +96,18 @@ def getAdjacencyList(dateStr):
 
 def getPassengersWithShortDate(date):
   l = []
-  passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+  passengerDate = global_data.passengers[0].datetimeAsDatetime()
   while(passengerDate == date and len(global_data.passengers)):
-    passengerDate = datetime.strptime(global_data.passengers[0].datetime, "%m/%d/%Y %H:%M:%S")
+    passengerDate = global_data.passengers[0].datetimeAsDatetime()
     passenger = global_data.passengers.pop(0)
     l.append(passenger)
   return l  
 
 def getDriversWithShortDate(date):
   l = []
-  driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+  driverDate = global_data.drivers[0].datetimeAsDatetime()
   while(driverDate == date  and len(global_data.drivers)):
-    driverDate = datetime.strptime(global_data.drivers[0].datetime, "%m/%d/%Y %H:%M:%S")
+    driverDate = global_data.drivers[0].datetimeAsDatetime()
     driver = global_data.drivers.pop(0)
     l.append(driver)
   return l 
@@ -413,5 +414,69 @@ def passengerInRange(p):
     return False
   
   return True
+
+def addNextInPassengersAndOrDrivers(waitingPassengerList, waitingDriverList):
+  if global_data.passengers and global_data.drivers:
+      firstPassenger = global_data.passengers[0]
+      firstDriver = global_data.drivers[0]
+      if firstPassenger.datetimeAsDatetime() == firstDriver.datetimeAsDatetime():
+        pArr = getPassengersWithShortDate(firstPassenger.datetimeAsDatetime())
+        for p in pArr:
+          if passengerInRange(p):
+            waitingPassengerList.append(p)
+        dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
+        for d in dArr:
+          waitingDriverList.append(d)
+      elif firstPassenger.datetimeAsDatetime() < firstDriver.datetimeAsDatetime():
+        pArr = getPassengersWithShortDate(firstPassenger.datetimeAsDatetime())
+        for p in pArr:
+          if passengerInRange(p):
+            waitingPassengerList.append(p)
+      else:
+        dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
+        for d in dArr:
+          waitingDriverList.append(d)
+  elif global_data.passengers and not global_data.drivers:
+      passengerDate = global_data.passengers[0].datetimeAsDatetime()
+      pArr = getPassengersWithShortDate(firstPassenger.datetimeAsDatetime())
+      for p in pArr:
+        if passengerInRange(p):
+          waitingPassengerList.append(p)
+  elif not global_data.passengers and global_data.drivers:
+      driverDate = global_data.drivers[0].datetimeAsDatetime()
+      dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
+      for d in dArr:
+        waitingDriverList.append(d)
+  return waitingPassengerList, waitingDriverList
+
+def matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList):
+  #match passenger to driver
+  passenger = 0
+  driver = 0
+  minPairwiseDist = float('inf')
+  passengerNodeIDs = []
+
+  firstPassengerDate = waitingPassengerList[0].datetimeAsDatetime()
+  firstDriverDate = waitingDriverList[0].datetimeAsDatetime()
+  latestDateTemp = waitingDriverList[0].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[0].datetime
+  
+  for p in waitingPassengerList:
+    passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
+
+  for d in waitingDriverList:
+    driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
+    adjacencyList = getAdjacencyList(latestDateTemp)
+    dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
+    if(dist < minPairwiseDist):
+      passenger = pID
+      driver = d
+      minPairwiseDist = dist
+
+  i = passengerNodeIDs.index(pID)
+  passenger = waitingPassengerList[i]
+
+  del waitingPassengerList[i]
+  waitingDriverList.remove(driver)
+  return passenger, driver, waitingPassengerList, waitingDriverList
 
 
