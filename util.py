@@ -148,9 +148,14 @@ def getApproxHaversineDist(point1, point2):
   point1 as (lat1, long1), point2 as (lat2, long2)
 
   '''
-  
+  # for small distances we can pretend the Earth is flat (still keep high precision
+
+  # length of meridian is approx 12450 miles
+  # dividing by 180 for rad calcs gives the 69.17166249
   kx = math.cos(((point1[0]+point2[0])/2) * (math.pi / 180)) * 69.17166249
   dx = (point1[1] - point2[1]) * kx
+  # equator length is approx 24861 miles 
+  # dividing by 360 for rad calcs gives 69.05857293
   dy = (point1[0] - point2[0]) * 69.05857293
   return math.sqrt((dx * dx) + (dy * dy))
 
@@ -168,7 +173,6 @@ def getApproxHaversineDistSquared(point1, point2):
   dx = (point1[1] - point2[1])
   dy = (point1[0] - point2[0])
   return (2731 * (dx * dx) + 4769.0864 * (dy * dy))
-
 
 def findClosestNode(point):
   '''
@@ -385,7 +389,7 @@ def passengerInRange(p):
     return False
   
   point2 = (float(p.destLat), float(p.destLong))
-  if getApproxHaversineDist(point2,global_data.center) > global_data.clusterRange:
+  if getHaversineDist(point2,global_data.center) > global_data.clusterRange:
     return False
   
   return True

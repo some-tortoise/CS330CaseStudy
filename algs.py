@@ -253,7 +253,7 @@ def AstarToAll(graph, sourceNode, destNodes, dateStr): #added time variable from
                 timeTillPoint[neighbor] = new_dist
                 
                 temp = global_data.nodes[neighbor]
-                #f = abs(float(temp['lat'])-lat2)*const1+abs(float(temp['lon'])-lon2)*const2 # does not inclue new_dist
+                # does not inclue new_dist
 
                 lat1 = float(temp['lat'])
                 lon1 = float(temp['lon'])
