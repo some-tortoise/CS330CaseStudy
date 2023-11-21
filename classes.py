@@ -1,6 +1,6 @@
 from datetime import datetime
 import global_data
-from util import *
+import math
 
 class Cluster:
   def __init__(self, passengerList, driverList, clusterPoint):
@@ -18,11 +18,24 @@ class Clusters:
     i = 0
     clusterChosen = i
     for clusterPoint in global_data.clusterPoints:
-      clusterDist = getApproxHaversineDist(clusterPoint, (float(lat), float(lon)))
+
+      # Haversine calculation Below
+      # convert decimal degrees to radians 
+      lat1, lon1, lat2, lon2 = map(math.radians, [clusterPoint[0], clusterPoint[1], float(lat), float(lon)])
+
+      # haversine formula 
+      dlon = lon2 - lon1 
+      dlat = lat2 - lat1 
+
+      # using taylor series approximation to 3 terms
+      a = ((dlat/2)-((dlat/2)**3)/6 + ((dlat/2)**5)/120)**2 + (1-(lat1**2)/2 + (lat1**4)/24) * (1-(lat2**2)/2 + (lat2**4)/24) * (((dlon/2)-((dlon/2)**3)/6 + ((dlon/2)**5)/120)**2) 
+      x = math.sqrt(a)
+      # using taylor series approximation to 2 terms
+      clusterDist = 7918 * x+ 1319.666 * (x**3)
       if clusterDist < minDist:
         minDist = clusterDist
         clusterChosen = i
-        i += 1
+      i += 1
     return self.clusterList[clusterChosen]
   
   def someClusterHasPassengers(self):

@@ -9,12 +9,11 @@ import cProfile   #REMOVE BEFORE SUBMISSION
 import pstats #REMOVE BEFORE SUBMISSION
 
 
-
 ###self defined files###
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4, t5, t5Clean, t5Clusters #utility functions
+from tasks import t1, t2, t3, t4, t5, t5Clusters #utility functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -30,7 +29,7 @@ global_data.nodes = getNodes() # dict of nodes
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/drivers.csv')
+driverCSVarr = read_csv('./data/driverSubset.csv')
 global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 time2 = time.time()
