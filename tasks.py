@@ -599,6 +599,12 @@ def t5Clusters():
         rideList.append(r)
 
         printRideDetails(r, rideNumber)
+        print(f'Latest date: {latestDate}')
+        print(f'Driver datetime: {driver.datetime}')
+        print(f'Passenger datetime: {passenger.datetime}')
+        print(f'Number of passengers in queue: {len(waitingPassengerList)}')
+        print(f'Number of drivers in queue: {len(waitingDriverList)}')
+        print(f'Time between: {((abs(driver.datetimeAsDatetime() - passenger.datetimeAsDatetime())).total_seconds() / 60)}')
         rideNumber += 1
 
         #updating driver details
@@ -610,5 +616,10 @@ def t5Clusters():
         else:
           i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
           global_data.drivers.insert(i, driver)
-    
+  
+
+  for cluster in global_data.clusters.clusterList:
+    for driver in cluster.driverList:
+      driver.timeOnJob = 240
+      finishedDrivers.append(driver)
   printEndStats(rideList, finishedDrivers, 't5_clusters')
