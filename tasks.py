@@ -603,4 +603,4 @@ def t5Clusters():
           i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
           global_data.drivers.insert(i, driver)
     
-  printEndStats(rideList, finishedDrivers, 't5')
+  printEndStats(rideList, finishedDrivers, 't5_clusters')
