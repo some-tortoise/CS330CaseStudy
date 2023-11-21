@@ -1,9 +1,11 @@
+### NOT FOR SUBMISSION ONLY FOR VISUALIZING DATA
+
 import numpy as np 
 import matplotlib.pyplot as plt
 import statistics 
 
-TASK = 't4'
 
+TASK = 't4'
 
 with open(f"{TASK}_results.txt", 'r') as file:
     # Read the entire content of the file
@@ -17,7 +19,6 @@ passengerWaitFromAvailableTillDest = [float(a) for a in passengerWaitFromAvailab
 driverProfits = [float(a) for a in driverProfitsString[1:-1].split(', ')]
 passengersCarried = [float(a) for a in passengersCarriedString[1:-1].split(', ')]
 timeOnJobs = [float(a) for a in timeOnJobsString[1:-1].split(', ')]
-
 
 
 

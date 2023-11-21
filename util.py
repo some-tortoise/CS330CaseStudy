@@ -8,7 +8,6 @@ import global_data
 from classes import Passenger, Driver, KdNode, Cluster, Clusters
 from algs import AstarToAll
 
-
 def createAdjacencyLists():
   for i in range(0,24):
     global_data.adjacencyListsWeekdays[i] = createAdjacencyListAsDict('weekday', i)
@@ -43,37 +42,6 @@ def createAdjacencyListAsDict(type, hour):
         adjacencyList.update({edge[0] : temp})
       else:
         adjacencyList.update({edge[0] : [(edge[1], weight)]})
-
-  return adjacencyList
-
-# def createAdjacencyListAsLinkedList(type, hour):
-  
-  '''
-  Input:
-  type can either be 'weekday' or 'weekend'
-  hour is integer from [0,23]
-
-  Output: 
-  adjacency list
-  '''
-  adjacencyList = []
-
-  if(type == 'weekday'):
-    speedIndex = 3+hour #look at column 3+i for weights
-  elif(type == 'weekend'):
-    speedIndex = 27+hour #look at column 27+i for weights
-  else:
-    raise TypeError
-  
-
-  for edge in edges:
-      speed = float(edge[speedIndex])
-      length = float(edge[2])
-      weight = length/speed
-      if len(adjacencyList) == 0 or adjacencyList[-1][0] != edge[0]:
-        adjacencyList.append([edge[0],(edge[1], weight)]) # [sourceNode, (destNode, weight)]
-      else:
-        adjacencyList[-1].append((edge[1], weight)) # (destNode, weight)
 
   return adjacencyList
 

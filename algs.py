@@ -17,11 +17,6 @@ def BinarySearchOnDrivers(list, a):
     mid = 0
     while low <= high:
         mid = math.floor((low+high)/2)
-        # print('---')
-        # print(mid)
-        # print(list[mid])
-        # print(a)
-        # print('---')
         if (list[mid].datetime <= a and mid == high) or (list[mid].datetime <= a and list[mid+1].datetime >= a):
             return mid + 1
         elif list[mid].datetime < a:
@@ -44,9 +39,8 @@ def Dijkstra(graph, sourceNode, destNode): #added adj list parameter, deleted ti
   returns time it takes to get from source to destination
   '''
 
-  # Initialize distances dictionary with infinity for all vertices except the source
+  # Initialize distances dictionary with 0 for the source
 
-  #timeTillPoint = {vertex: float('infinity') for vertex in graph}
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
 
@@ -89,7 +83,7 @@ def DijkstraToAll(graph, sourceNode, destNodesList): #added adj list parameter, 
   returns time it takes to get from source to closest destination
   '''
 
-  # Initialize distances dictionary with infinity for all vertices except the source
+  # Initialize distances dictionary with 0 for the source
 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
@@ -134,6 +128,8 @@ def Astar(graph, sourceNode, destNode, dateStr): #added time variable from param
   Output:
   returns time it takes to get from source to destination
   '''
+
+  # Initialize distances dictionary with 0 for the source
 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0
@@ -201,6 +197,8 @@ def AstarToAll(graph, sourceNode, destNodes, dateStr): #added time variable from
   Output:
   returns time it takes to get from source to destination
   '''
+
+  # Initialize distances dictionary with 0 for the source
 
   timeTillPoint = {}
   timeTillPoint[sourceNode] = 0

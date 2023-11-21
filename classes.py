@@ -1,6 +1,7 @@
 from datetime import datetime
-import global_data
 import math
+
+import global_data
 
 class Cluster:
   def __init__(self, passengerList, driverList, clusterPoint):
@@ -79,6 +80,7 @@ class Driver:
     if self.timeOnJob >= 240 or self.passengersCarried >= 15:
       return True
     return False
+  
   def __lt__(self, other):
     date1 = datetime.strptime(self.datetime, "%m/%d/%Y %H:%M:%S")
     date2 = datetime.strptime(other.datetime, "%m/%d/%Y %H:%M:%S")

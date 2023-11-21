@@ -1,8 +1,10 @@
+PROBABLY WON'T DO
 1. Use Fibonacci Heap in Dijkstra ??
 2. Look into Differential Heurisitcs
 3. Look into checking if KD tree is balanced
-4. Measure A* overshoot and accuracy
-5. Measure A* v2 accuracy and A* to all (think it is the same)
-6. Show approx haversine is good
-7. Show findClosestInKD returns approximately close node. Measure accuracy?
-8. 
+
+DEFINITELY NEED TO DO
+4. Show A* and A* To All are more efficient and still accurate enough compared to Dijkstra and Dijkstra To All
+   i. Specifically measure how often A* overshoots
+5. Show getApproxHaversine is more efficient and still accurate enoough compared to getHaversine
+6. Show findClosestInKD is more efficient and still accurate enough compared to findClosestNode

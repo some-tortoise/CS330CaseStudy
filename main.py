@@ -5,6 +5,7 @@ import math
 import heapq
 import time
 import statistics
+
 import cProfile   #REMOVE BEFORE SUBMISSION
 import pstats #REMOVE BEFORE SUBMISSION
 
@@ -13,7 +14,7 @@ import pstats #REMOVE BEFORE SUBMISSION
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4, t5, t5Clusters #utility functions
+from tasks import t1, t2, t3, t4, t5, t5Clusters #task functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -58,11 +59,12 @@ for key, val in global_data.nodes.items():
 #ONLY FOR T4 and T5
 global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 
+#ONLY FOR T5
+global_data.clusters = initializeClusters()
+
 time3 = time.time()
 print(f'Time for preprocessing: {time3 - time2} seconds')
 
-#ONLY FOR T5
-global_data.clusters = initializeClusters()
 
 
 ### RUN TASK ###
@@ -95,6 +97,15 @@ def profiler(command, filename="profile.stats", n_stats=10):
     return stats.print_stats(n_stats or {})
 
 profiler('t5Clusters()', filename='profile.stats', n_stats=30)
+
+
+
+#t1()
+#t2()
+#t3()
+#t4()
+#t5()
+#t5Clusters()
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

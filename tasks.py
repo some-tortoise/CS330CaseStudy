@@ -426,7 +426,7 @@ def t4():
     
   printEndStats(rideList, finishedDrivers, 't4')
 
-def t5():
+def t5(): # first attempt at optimizing t5
   
   waitingPassengerList = []
   waitingDriverList = []
@@ -546,7 +546,7 @@ def t5():
     
   printEndStats(rideList, finishedDrivers, 't5')
 
-def t5Clusters():
+def t5Clusters(): # second and better attempt at optimizing t5
 
   rideList = []
   finishedDrivers = []
@@ -617,7 +617,6 @@ def t5Clusters():
           i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
           global_data.drivers.insert(i, driver)
   
-
   for cluster in global_data.clusters.clusterList:
     for driver in cluster.driverList:
       driver.timeOnJob = 240
