@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 import statistics
 import time
+import timeit
 
 import global_data
 from classes import Passenger, Driver, KdNode, Cluster, Clusters
@@ -15,33 +16,33 @@ from util import * #utility functions
 
 
 
-global_data.edges = read_csv('./data/edges.csv')
-global_data.nodes = getNodes() # dict of nodes
+# global_data.edges = read_csv('./data/edges.csv')
+# global_data.nodes = getNodes() # dict of nodes
 
 passengerCSVarr = read_csv('./data/passengers.csv')
 global_data.passengers = [Passenger(*d, 0) for d in passengerCSVarr]
 
-driverCSVarr = read_csv('./data/drivers.csv')
-global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
+# driverCSVarr = read_csv('./data/drivers.csv')
+# global_data.drivers = [Driver(*d, 0, 0, 0) for d in driverCSVarr]
 
 
-global_data.avgSpeedList = [0]*48
+# global_data.avgSpeedList = [0]*48
 
-for edge in global_data.edges:
-    for i in range(0, 48):
-        global_data.avgSpeedList[i] += float(edge[i+3])
-for i in range(0,48):
-    global_data.avgSpeedList[i] /= len(global_data.edges)
+# for edge in global_data.edges:
+#     for i in range(0, 48):
+#         global_data.avgSpeedList[i] += float(edge[i+3])
+# for i in range(0,48):
+#     global_data.avgSpeedList[i] /= len(global_data.edges)
 
-createAdjacencyLists()
+# createAdjacencyLists()
 
-initialNodeList = []
-global_data.reversedNodes = {}
-for key, val in global_data.nodes.items():
-    global_data.reversedNodes[(global_data.nodes[key]['lat'], global_data.nodes[key]['lon'])] = key
-    initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
+# initialNodeList = []
+# global_data.reversedNodes = {}
+# for key, val in global_data.nodes.items():
+#     global_data.reversedNodes[(global_data.nodes[key]['lat'], global_data.nodes[key]['lon'])] = key
+#     initialNodeList.append([key, global_data.nodes[key]['lat'], global_data.nodes[key]['lon']])
 
-global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
+# global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 
 
 
@@ -52,7 +53,7 @@ global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 
 
 
-#Show getApproxHaversine is more efficient and still accurate enoough compared to getHaversine
+#Show getApproxHaversine is more efficient and still accurate enough compared to getHaversine
 
 avgError = 0
 maxError = 0
@@ -65,24 +66,20 @@ for p in global_data.passengers:
     avgError += err
 avgError /= len(global_data.passengers)
 
-time1 = time.time()
-for p in global_data.passengers:
-    distance = getHaversineDist((p.sourceLat, p.sourceLong), (p.destLat, p.destLong))
+def func1():
+    distance1 =  0
+    for p in global_data.passengers:
+        distance1 += getHaversineDist((float(p.sourceLat), float(p.sourceLong)), (float(p.destLat), float(p.destLong)))
 
-time2 = time.time()
-for p in global_data.passengers:
-    distance = getApproxHaversineDist((float(p.sourceLat), float(p.sourceLong)),(float(p.destLat), float(p.destLong)))
-time3 = time.time()
+def func2():
+    distance2 = 0
+    for p in global_data.passengers:
+        distance2 += getApproxHaversineDist((float(p.sourceLat), float(p.sourceLong)),(float(p.destLat), float(p.destLong)))
 
-timesFaster = (time2 - time1)/(time3 - time2)
-
+time_taken = timeit.timeit(func1, number=1000)
+print(f'time taken on Haversine: {time_taken}')
+time_taken2 = timeit.timeit(func2, number=1000)
+print(f'time taken on Approx Haversine: {time_taken2}')
 print(f'Average Error: {avgError} miles')
 print(f'Maximum Error: {maxError} miles')
-print(f'Time for Haversine: {time2 - time1} seconds')
-print(f'Time for ApproxHaversine: {time3 - time2} seconds')
-print(f'ApproxHaversine is {timesFaster} times faster than Haversine')
-
-
-
-#Show findClosestInKD is more efficient and still accurate enough compared to findClosestNode
-
+print(f'ApproxHaversine is {time_taken/time_taken2} times faster than Haversine')

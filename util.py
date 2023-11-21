@@ -149,19 +149,26 @@ def getApproxHaversineDist(point1, point2):
 
   '''
   
-  # convert decimal degrees to radians 
-  lat1, lon1, lat2, lon2 = map(math.radians, [point1[0], point1[1], point2[0], point2[1]])
+  kx = math.cos(((point1[0]+point2[0])/2) * (math.pi / 180)) * 69.17166249
+  dx = (point1[1] - point2[1]) * kx
+  dy = (point1[0] - point2[0]) * 69.05857293
+  return math.sqrt((dx * dx) + (dy * dy))
 
-  # haversine formula 
-  dlon = lon2 - lon1 
-  dlat = lat2 - lat1 
+def getApproxHaversineDistSquared(point1, point2):
+  '''
+  returns estimate of distance between two points in miles
 
-  # using taylor series approximation to 3 terms
-  a = ((dlat/2)-((dlat/2)**3)/6 + ((dlat/2)**5)/120)**2 + (1-(lat1**2)/2 + (lat1**4)/24) * (1-(lat2**2)/2 + (lat2**4)/24) * (((dlon/2)-((dlon/2)**3)/6 + ((dlon/2)**5)/120)**2) 
-  x = math.sqrt(a)
-  # using taylor series approximation to 2 terms
-  cTimesR = 7918 * x+ 1319.666 * (x**3)
-  return cTimesR
+  Input
+  point1 as (lat1, long1), point2 as (lat2, long2)
+
+  '''
+
+  # like approx haversine dist but we pre-estimate the cosine for the new york area. 
+  # leads to a max error of 0.1 miles on passenger data set
+  dx = (point1[1] - point2[1])
+  dy = (point1[0] - point2[0])
+  return (2731 * (dx * dx) + 4769.0864 * (dy * dy))
+
 
 def findClosestNode(point):
   '''
@@ -360,8 +367,8 @@ def findClosestInKDT5(root, query_point, current_closest, splitter=0):
 
   #check nodes
   rootPoint = (float(root.value[1]), float(root.value[2]))
-  distToRoot = getApproxHaversineDist(query_point, rootPoint)
-  currentClosestDist = getApproxHaversineDist(query_point, (float(current_closest.value[1]), float(current_closest.value[2])))
+  distToRoot = getApproxHaversineDistSquared(query_point, rootPoint)
+  currentClosestDist = getApproxHaversineDistSquared(query_point, (float(current_closest.value[1]), float(current_closest.value[2])))
   if distToRoot < currentClosestDist:
     current_closest = root
 
@@ -374,11 +381,11 @@ def findClosestInKDT5(root, query_point, current_closest, splitter=0):
 
 def passengerInRange(p):
   point1 = (float(p.sourceLat), float(p.sourceLong))
-  if getHaversineDist(point1,global_data.center) > global_data.clusterRange:
+  if getApproxHaversineDist(point1,global_data.center) > global_data.clusterRange:
     return False
   
   point2 = (float(p.destLat), float(p.destLong))
-  if getHaversineDist(point2,global_data.center) > global_data.clusterRange:
+  if getApproxHaversineDist(point2,global_data.center) > global_data.clusterRange:
     return False
   
   return True
