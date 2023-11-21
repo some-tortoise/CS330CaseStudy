@@ -566,6 +566,15 @@ def t5Clusters():
         cluster.passengerList = waitingPassengerList
         cluster.driverList = waitingDriverList
 
+        if (passenger.datetimeAsDatetime() < driver.datetimeAsDatetime()) and ((driver.datetimeAsDatetime() - passenger.datetimeAsDatetime()).total_seconds() / 60) > 60:
+          waitingDriverList.append(driver)
+          continue
+        
+        if driver.isDoneWithWork():
+          finishedDrivers.append(driver)
+          waitingPassengerList.append(passenger)
+          continue
+
         #some processing
         latestDate = driver.datetime if passenger.datetimeAsDatetime() < driver.datetimeAsDatetime() else passenger.datetime
         adjacencyList = getAdjacencyList(latestDate)
