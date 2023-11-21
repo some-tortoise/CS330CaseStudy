@@ -39,14 +39,14 @@ class Clusters:
     return self.clusterList[clusterChosen]
   
   def someClusterHasPassengers(self):
-    for cluster in global_data.clusters:
-      if (len(cluster.passengerList)):
+    for cluster in self.clusterList:
+      if cluster.passengerList:
         return True
     return False
   
   def someClusterHasDrivers(self):
-    for cluster in global_data.clusters:
-      if (len(cluster.driverList)):
+    for cluster in self.clusterList:
+      if cluster.driverList:
         return True
     return False
   

@@ -416,7 +416,7 @@ def passengerInRange(p):
   return True
 
 def addNextInPassengersAndOrDriversT5Clusters():
-
+  
   if global_data.passengers and global_data.drivers:
       firstPassenger = global_data.passengers[0]
       firstDriver = global_data.drivers[0]
@@ -426,7 +426,6 @@ def addNextInPassengersAndOrDriversT5Clusters():
           if passengerInRange(p):
             clust = global_data.clusters.findClusterForPoint((p.sourceLat, p.sourceLong))
             clust.passengerList.append(p)
-          
         dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
         for d in dArr:
           clust = global_data.clusters.findClusterForPoint((d.lat, d.long))
@@ -443,6 +442,7 @@ def addNextInPassengersAndOrDriversT5Clusters():
           clust = global_data.clusters.findClusterForPoint((d.lat, d.long))
           clust.driverList.append(d)
   elif global_data.passengers and not global_data.drivers:
+      firstPassenger = global_data.passengers[0]
       passengerDate = global_data.passengers[0].datetimeAsDatetime()
       pArr = getPassengersWithShortDate(firstPassenger.datetimeAsDatetime())
       for p in pArr:
@@ -450,13 +450,14 @@ def addNextInPassengersAndOrDriversT5Clusters():
           clust = global_data.clusters.findClusterForPoint((p.sourceLat, p.sourceLong))
           clust.passengerList.append(p)
   elif not global_data.passengers and global_data.drivers:
+      firstDriver = global_data.drivers[0]
       driverDate = global_data.drivers[0].datetimeAsDatetime()
       dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
       for d in dArr:
         clust = global_data.clusters.findClusterForPoint((d.lat, d.long))
         clust.driverList.append(d)
 
-def matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList):
+def matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList):
   #match passenger to driver
   passenger = 0
   driver = 0

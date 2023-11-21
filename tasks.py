@@ -562,7 +562,7 @@ def t5Clusters():
       while waitingPassengerList and waitingDriverList:
         
         #matching passenger and driver
-        passenger, driver, waitingPassengerList, waitingDriverList = matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList)
+        passenger, driver, waitingPassengerList, waitingDriverList = matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList)
         cluster.passengerList = waitingPassengerList
         cluster.driverList = waitingDriverList
 
