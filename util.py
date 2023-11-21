@@ -457,21 +457,30 @@ def addNextInPassengersAndOrDriversT5Clusters():
         clust = global_data.clusters.findClusterForPoint((d.lat, d.long))
         clust.driverList.append(d)
 
-def matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList):
+def matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList, finishedDrivers):
   #match passenger to driver
-  passenger = 0
+  passenger = None
   driver = 0
   minPairwiseDist = float('inf')
   passengerNodeIDs = []
 
+
   firstPassengerDate = waitingPassengerList[0].datetimeAsDatetime()
   firstDriverDate = waitingDriverList[0].datetimeAsDatetime()
-  latestDateTemp = waitingDriverList[0].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[0].datetime
+  latestDateTemp = waitingDriverList[-1].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[-1].datetime
   
   for p in waitingPassengerList:
     passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
 
   for d in waitingDriverList:
+    
+    if ((datetime.strptime(latestDateTemp, "%m/%d/%Y %H:%M:%S")-d.datetimeAsDatetime()).total_seconds() / 60 + d.timeOnJob) > 240:
+      d.timeOnJob = (datetime.strptime(latestDateTemp, "%m/%d/%Y %H:%M:%S")-d.datetimeAsDatetime()).total_seconds() / 60 + d.timeOnJob
+      waitingDriverList.remove(d)
+      finishedDrivers.append(driver)
+      if len(waitingDriverList) == 0:
+        return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
+      continue
     driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
     adjacencyList = getAdjacencyList(latestDateTemp)
     dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
@@ -485,7 +494,7 @@ def matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList):
 
   del waitingPassengerList[i]
   waitingDriverList.remove(driver)
-  return passenger, driver, waitingPassengerList, waitingDriverList
+  return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
 
 def initializeClusters():
   clusters = Clusters([])

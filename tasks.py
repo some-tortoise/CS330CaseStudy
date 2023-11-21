@@ -562,17 +562,16 @@ def t5Clusters():
       while waitingPassengerList and waitingDriverList:
         
         #matching passenger and driver
-        passenger, driver, waitingPassengerList, waitingDriverList = matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList)
+        passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers = matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList, finishedDrivers)
         cluster.passengerList = waitingPassengerList
         cluster.driverList = waitingDriverList
 
+        if passenger == None:
+          continue
+
         if (passenger.datetimeAsDatetime() < driver.datetimeAsDatetime()) and ((driver.datetimeAsDatetime() - passenger.datetimeAsDatetime()).total_seconds() / 60) > 60:
           waitingDriverList.append(driver)
-          continue
-        
-        if driver.isDoneWithWork():
-          finishedDrivers.append(driver)
-          waitingPassengerList.append(passenger)
+          cluster.driverList = waitingDriverList
           continue
 
         #some processing
