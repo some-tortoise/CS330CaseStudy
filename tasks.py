@@ -546,7 +546,6 @@ def t5():
     
   printEndStats(rideList, finishedDrivers, 't5')
 
-
 def t5Clean():
 
   waitingPassengerList = []
@@ -557,7 +556,66 @@ def t5Clean():
 
   while (global_data.passengers or waitingPassengerList) and (global_data.drivers or waitingDriverList):
 
-    waitingPassengerList, waitingDriverList = addNextInPassengersAndOrDrivers(waitingPassengerList, waitingDriverList)
+    waitingPassengerList, waitingDriverList = addNextInPassengersAndOrDriversT5(waitingPassengerList, waitingDriverList)
+
+    while waitingPassengerList and waitingDriverList:
+      
+      #matching passenger and driver
+      passenger, driver, waitingPassengerList, waitingDriverList = matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList)
+
+      #some processing
+      latestDate = driver.datetime if passenger.datetimeAsDatetime() < driver.datetimeAsDatetime() else passenger.datetime
+      adjacencyList = getAdjacencyList(latestDate)
+      
+      #calculating route details
+      driverNode = grabOrCreateSexyNodeT5((driver.lat, driver.long)) # will return current node in graph or new created one if needed
+      passengerNode = grabOrCreateSexyNodeT5((passenger.sourceLat, passenger.sourceLong))
+      destNode = grabOrCreateSexyNodeT5((passenger.destLat, passenger.destLong))
+      
+      #calculating estimated times for routes
+      timeFromDriverToPassenger = Astar(adjacencyList, driverNode, passengerNode, latestDate)
+      timeFromPassengerToDest = Astar(adjacencyList, passengerNode, destNode, latestDate)
+      totalTimeInMin = (timeFromDriverToPassenger + timeFromPassengerToDest)
+
+      #saving ride details
+      passengerWaitFromAvailableTillDest = 0
+      if latestDate == driver.datetime:
+        passengerWaitFromAvailableTillDest = ((driver.datetimeAsDatetime() - passenger.datetimeAsDatetime()).total_seconds() / 60) + totalTimeInMin
+      else:
+        passengerWaitFromAvailableTillDest = totalTimeInMin
+
+      r = Ride(timeFromDriverToPassenger, timeFromPassengerToDest, passengerWaitFromAvailableTillDest)
+      rideList.append(r)
+
+      printRideDetails(r, rideNumber)
+      rideNumber += 1
+
+      #updating driver details
+      driver = updateDriverDetails(driver, r, latestDate)
+
+      # remove driver if done otherwise add back to list
+      if driver.isDoneWithWork():
+        finishedDrivers.append(driver)
+      else:
+        i = BinarySearchOnDrivers(global_data.drivers, driver.datetime)
+        global_data.drivers.insert(i, driver)
+    
+  printEndStats(rideList, finishedDrivers, 't5')
+
+def t5Clusters():
+
+  waitingPassengerList = []
+  waitingDriverList = []
+  rideList = []
+  finishedDrivers = []
+  rideNumber = 1
+
+  while (global_data.passengers and global_data.clusters.someClusterHasDrivers()) or (global_data.drivers and global_data.clusters.someClusterHasPassengers()):
+
+    addNextInPassengersAndOrDriversT5Clusters()
+
+    waitingPassengerList = global_data.clusters.clusterList[0].passengerList
+    waitingDriverList = global_data.clusters.clusterList[0].driverList
 
     while waitingPassengerList and waitingDriverList:
       

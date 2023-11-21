@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 import global_data
-from classes import Passenger, Driver, KdNode
+from classes import Passenger, Driver, KdNode, Cluster, Clusters
 from algs import AstarToAll
 
 
@@ -415,15 +415,18 @@ def passengerInRange(p):
   
   return True
 
-def addNextInPassengersAndOrDrivers(waitingPassengerList, waitingDriverList):
+def addNextInPassengersAndOrDriversT5Clusters():
+  waitingPassengerList = global_data.clusters.clusterList[0].passengerList
+  waitingDriverList = global_data.clusters.clusterList[0].driverList
+
   if global_data.passengers and global_data.drivers:
       firstPassenger = global_data.passengers[0]
       firstDriver = global_data.drivers[0]
       if firstPassenger.datetimeAsDatetime() == firstDriver.datetimeAsDatetime():
         pArr = getPassengersWithShortDate(firstPassenger.datetimeAsDatetime())
         for p in pArr:
-          if passengerInRange(p):
-            waitingPassengerList.append(p)
+          waitingPassengerList.append(p)
+          #global_data.clusters.findClusterForPoint((p.sourceLat, p.sourceLong))
         dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
         for d in dArr:
           waitingDriverList.append(d)
@@ -447,7 +450,9 @@ def addNextInPassengersAndOrDrivers(waitingPassengerList, waitingDriverList):
       dArr = getDriversWithShortDate(firstDriver.datetimeAsDatetime())
       for d in dArr:
         waitingDriverList.append(d)
-  return waitingPassengerList, waitingDriverList
+  
+  global_data.clusters.clusterList[0].passengerList = waitingPassengerList
+  global_data.clusters.clusterList[0].driverList = waitingDriverList
 
 def matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList):
   #match passenger to driver
@@ -479,4 +484,9 @@ def matchPassengersAndDriversT5(waitingPassengerList, waitingDriverList):
   waitingDriverList.remove(driver)
   return passenger, driver, waitingPassengerList, waitingDriverList
 
-
+def initializeClusters():
+  clusters = Clusters([])
+  for cP in global_data.clusterPoints:
+    cluster = Cluster([], [], cP)
+    clusters.clusterList.append(cluster)
+  return clusters

@@ -1,20 +1,26 @@
 from datetime import datetime
 
 class Cluster:
-  def __init__(self, passengerList, driverList, boundary):
+  def __init__(self, passengerList, driverList, clusterPoint):
     self.passengerList = passengerList
     self.driverList = driverList
-    self.boundary = boundary
+    self.clusterPoint = clusterPoint
 
 class Clusters:
   def __init__(self, clusterList):
     self.clusterList = clusterList
   
-  def findClusterForPoint(point):
-    return Cluster
+  def findClusterForPoint(self, point):
+    return self.clusterList[0]
+  
+  def someClusterHasPassengers(self):
+    return True
+  
+  def someClusterHasDrivers(self):
+    return True
   
 class Passenger:
-  def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting, priority=0, clusterID=0):
+  def __init__(self, datetime, sourceLat, sourceLong, destLat, destLong, timeWaiting, priority=0):
     self.datetime = datetime
     self.sourceLat = sourceLat
     self.sourceLong = sourceLong
@@ -22,20 +28,18 @@ class Passenger:
     self.destLong = destLong
     self.timeWaiting = timeWaiting
     self.priority = priority
-    self.clusterID = clusterID
   
   def datetimeAsDatetime(self):
     return datetime.strptime(self.datetime, "%m/%d/%Y %H:%M:%S")
 
 class Driver:
-  def __init__(self, datetime, lat, long, timeOnJob, passengersCarried, driverProfit, clusterID=0):
+  def __init__(self, datetime, lat, long, timeOnJob, passengersCarried, driverProfit):
     self.datetime = datetime
     self.lat = lat
     self.long = long
     self.timeOnJob = timeOnJob
     self.passengersCarried = passengersCarried
     self.driverProfit = driverProfit
-    self.clusterID = clusterID
 
   def datetimeAsDatetime(self):
     return datetime.strptime(self.datetime, "%m/%d/%Y %H:%M:%S")
