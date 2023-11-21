@@ -465,35 +465,46 @@ def matchPassengersAndDriversT5Cluster(waitingPassengerList, waitingDriverList, 
   passengerNodeIDs = []
 
 
-  firstPassengerDate = waitingPassengerList[0].datetimeAsDatetime()
-  firstDriverDate = waitingDriverList[0].datetimeAsDatetime()
-  latestDateTemp = waitingDriverList[-1].datetime if firstPassengerDate < firstDriverDate else waitingPassengerList[-1].datetime
+  lastPassengerDate = waitingPassengerList[-1].datetimeAsDatetime()
+  lastDriverDate = waitingDriverList[-1].datetimeAsDatetime()
+  latestDateTemp = waitingDriverList[-1].datetime if lastPassengerDate < lastDriverDate else waitingPassengerList[-1].datetime
   
   for p in waitingPassengerList:
     passengerNodeIDs.append(grabOrCreateSexyNodeT5((p.sourceLat, p.sourceLong)))
+  
+  removeList = []
 
+  
   for d in waitingDriverList:
     
     if ((datetime.strptime(latestDateTemp, "%m/%d/%Y %H:%M:%S")-d.datetimeAsDatetime()).total_seconds() / 60 + d.timeOnJob) > 240:
-      d.timeOnJob = (datetime.strptime(latestDateTemp, "%m/%d/%Y %H:%M:%S")-d.datetimeAsDatetime()).total_seconds() / 60 + d.timeOnJob
-      waitingDriverList.remove(d)
-      finishedDrivers.append(driver)
+      d.timeOnJob = 240
+      removeList.append(d)
+      finishedDrivers.append(d)
       if len(waitingDriverList) == 0:
+        for d in removeList:
+          waitingDriverList.remove(d)
         return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
-      continue
-    driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
-    adjacencyList = getAdjacencyList(latestDateTemp)
-    dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
-    if(dist < minPairwiseDist):
-      passenger = pID
-      driver = d
-      minPairwiseDist = dist
+    else:
+      driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
+      adjacencyList = getAdjacencyList(latestDateTemp)
+      dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
+      if(dist < minPairwiseDist):
+        passenger = pID
+        driver = d
+        minPairwiseDist = dist
+  
+  for d in removeList:
+    waitingDriverList.remove(d)
+  if len(waitingDriverList) == 0:
+    return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
 
   i = passengerNodeIDs.index(pID)
   passenger = waitingPassengerList[i]
 
   del waitingPassengerList[i]
   waitingDriverList.remove(driver)
+  
   return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
 
 def initializeClusters():
