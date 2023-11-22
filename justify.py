@@ -43,6 +43,8 @@ for key, val in global_data.nodes.items():
 
 global_data.kdroot = buildKD(list=initialNodeList, dim=2, splitter=0)
 
+
+
 # show findClosestInKDT5 is accurate
 def test1():
     errorSum = 0
@@ -71,18 +73,18 @@ def test2():
             queryPoint = (float(p.sourceLat), float(p.sourceLong))
             nodeID = findClosestNode(queryPoint)
 
-
     def findClosest2():
         for p in global_data.passengers:
             queryPoint = (float(p.sourceLat), float(p.sourceLong))
             nodeID = findClosestInKDT5(global_data.kdroot, queryPoint, global_data.kdroot).value[0]
         
-
     time_taken = timeit.timeit(findClosest1, number=1)
     time_taken2 = timeit.timeit(findClosest2, number=1)
     print(f'time taken on findClosestNode: {time_taken}')
     print(f'time taken on findClosestInKDT5: {time_taken2}')
     print(f'findClosestInKDT5 is {time_taken/time_taken2} times faster than findClosestNode')
+
+
 
 # Show A* is accurate compared to Dijkstra
 def test3():
@@ -121,24 +123,23 @@ def test4():
         destNodes.append(destNode)
         datetimes.append(p.datetime)
 
-
     def dist1():
         for i in range(len(sourceNode)):
             graph = getAdjacencyList(datetimes[i])
             dist = Dijkstra(graph, sourceNodes[i], destNodes[i])
         
-
     def dist2():
         for i in range(len(sourceNode)):
             graph = getAdjacencyList(datetimes[i])
             dist = Astar(graph, sourceNodes[i], destNodes[i], datetimes[i])
             
-
     time_taken = timeit.timeit(dist1, number=1)
     time_taken2 = timeit.timeit(dist2, number=1)
     print(f'time taken on Dijkstra: {time_taken}')
     print(f'time taken on Astar: {time_taken2}')
     print(f'Astar is {time_taken/time_taken2} times faster than Dijkstra')
+
+
 
 #Show getApproxHaversine is accurate compared to getHaversine
 def test5():

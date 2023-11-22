@@ -148,7 +148,7 @@ def getApproxHaversineDist(point1, point2):
   point1 as (lat1, long1), point2 as (lat2, long2)
 
   '''
-  # for small distances we can pretend the Earth is flat (still keep high precision
+  # for small distances we can pretend the Earth is flat (still keep high precision)
 
   # length of meridian is approx 12450 miles
   # dividing by 180 for rad calcs gives the 69.17166249
@@ -389,7 +389,7 @@ def passengerInRange(p):
     return False
   
   point2 = (float(p.destLat), float(p.destLong))
-  if getHaversineDist(point2,global_data.center) > global_data.clusterRange:
+  if getApproxHaversineDist(point2,global_data.center) > global_data.clusterRange:
     return False
   
   return True
@@ -535,7 +535,6 @@ def matchPassengersAndDriversB2(waitingPassengerList, waitingDriverList, finishe
   waitingDriverList.remove(driver)
   
   return passenger, driver, waitingPassengerList, waitingDriverList, finishedDrivers
-
 
 def initializeClusters():
   clusters = Clusters([])

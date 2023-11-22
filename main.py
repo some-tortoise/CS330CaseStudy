@@ -63,9 +63,6 @@ time3 = time.time()
 print(f'Time for preprocessing: {time3 - time2} seconds')
 
 
-
-### RUN TASK ###
-
 # Run the profiler (REMOVE BEFORE SUBMISSION)
 #cProfile.run('t4()', sort='cumulative')
 
@@ -96,6 +93,7 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 # profiler('t5Clusters()', filename='profile.stats', n_stats=30)
 
 
+### RUN TASK ###
 
 #t1()
 #t2()
@@ -103,6 +101,12 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 t4()
 #t5()
 #t5Clusters()
+
+### RUN BONUS ###
+
+#b1()
+#b2()
+#b4()
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')
