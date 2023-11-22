@@ -75,7 +75,7 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 
 #b1()
 #b2()
-b4()
+#b4()
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')
