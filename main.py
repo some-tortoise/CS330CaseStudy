@@ -11,7 +11,7 @@ import statistics
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4, t5, t5Clusters, b1, b4 #task functions
+from tasks import t1, t2, t3, t4, t5, t5Clusters, b1, b2, b4 #task functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -98,14 +98,14 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 #t1()
 #t2()
 #t3()
-t4()
+#t4()
 #t5()
 #t5Clusters()
 
 ### RUN BONUS ###
 
 #b1()
-#b2()
+b2()
 #b4()
 
 time4 = time.time()

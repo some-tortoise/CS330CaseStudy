@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import statistics 
 
 
-TASK = 't1'
+TASK = 't5_clusters'
 
-with open(f"{TASK}_results.txt", 'r') as file:
+with open(f"results/{TASK}_results_done.txt", 'r') as file:
     # Read the entire content of the file
     file_content = file.read()
 

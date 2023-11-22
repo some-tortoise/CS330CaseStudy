@@ -24,6 +24,14 @@ fig_combined = px.scatter_mapbox(df_combined,
                                   height=800,
                                   width=800)
 
+fig_combined = px.density_mapbox(df_drivers, 
+                                  lat="Source Lat", 
+                                  lon="Source Lon", 
+                                  zoom=8, 
+                                  radius=5,
+                                  height=800,
+                                  width=800)
+
 # Customize the map layout
 fig_combined.update_layout(mapbox_style="open-street-map")
 fig_combined.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})

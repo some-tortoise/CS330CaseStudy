@@ -518,10 +518,10 @@ def matchPassengersAndDriversB2(waitingPassengerList, waitingDriverList, finishe
       driverNode = grabOrCreateSexyNodeT5((d.lat, d.long))
       adjacencyList = getAdjacencyList(latestDateTemp)
       dist, pID = AstarToAll(adjacencyList, driverNode, passengerNodeIDs, latestDateTemp)
-      if(dist + d.driverProfit < minPairwiseDist):
+      if(dist + d.driverProfit/35 < minPairwiseDist):
         passenger = pID
         driver = d
-        minPairwiseDist = dist + d.driverProfit
+        minPairwiseDist = dist + d.driverProfit/35
   
   for d in removeList:
     waitingDriverList.remove(d)
