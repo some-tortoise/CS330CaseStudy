@@ -6,7 +6,7 @@ from datetime import datetime
 import random
 import statistics
 import time
-import timeit # USES EXTERNAL PACKAGE. THIS IS NOT FOR THE ALGORITHM BUT JUST FOR PROFILING
+import timeit ### USES EXTERNAL PACKAGE. THIS IS NOT FOR THE ALGORITHM BUT JUST FOR PROFILING ###
 
 import global_data
 from classes import Passenger, Driver, KdNode, Cluster, Clusters
@@ -139,6 +139,8 @@ def test4():
     print(f'time taken on Astar: {time_taken2}')
     print(f'Astar is {time_taken/time_taken2} times faster than Dijkstra')
 
+
+
 #Show getApproxHaversine is accurate compared to getHaversine
 def test5():
     avgError = 0
@@ -172,5 +174,3 @@ def test6():
     print(f'time taken on Approx Haversine: {time_taken2}')
 
     print(f'ApproxHaversine is {time_taken/time_taken2} times faster than Haversine')
-
-test4()
