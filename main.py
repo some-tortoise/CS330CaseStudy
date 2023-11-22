@@ -16,7 +16,6 @@ from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
 
-
 time1 = time.time()
 
 ###READ IN DATA###
@@ -63,36 +62,6 @@ time3 = time.time()
 print(f'Time for preprocessing: {time3 - time2} seconds')
 
 
-# Run the profiler (REMOVE BEFORE SUBMISSION)
-#cProfile.run('t4()', sort='cumulative')
-
-# def profiler(command, filename="profile.stats", n_stats=10):
-#     """Profiler for a python program
-
-#     Runs cProfile and outputs ordered statistics that describe
-#     how often and for how long various parts of the program are executed.
-
-#     Stats can be visualized with `!snakeviz profile.stats`.
-
-#     Parameters
-#     ----------
-#     command: str
-#         Command string to be executed.
-#     filename: str
-#         Name under which to store the stats.
-#     n_stats: int or None
-#         Number of top stats to show.
-#     """
-#     import cProfile
-#     import pstats
-
-#     cProfile.run(command, filename)
-#     stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
-#     return stats.print_stats(n_stats or {})
-
-# profiler('t5Clusters()', filename='profile.stats', n_stats=30)
-
-
 ### RUN TASK ###
 
 #t1()
@@ -105,8 +74,8 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 ### RUN BONUS ###
 
 #b1()
-b2()
-#b4()
+#b2()
+b4()
 
 time4 = time.time()
 print(f'Time for task: {time4 - time3} seconds')

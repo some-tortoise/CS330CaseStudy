@@ -139,8 +139,6 @@ def test4():
     print(f'time taken on Astar: {time_taken2}')
     print(f'Astar is {time_taken/time_taken2} times faster than Dijkstra')
 
-
-
 #Show getApproxHaversine is accurate compared to getHaversine
 def test5():
     avgError = 0
@@ -174,3 +172,5 @@ def test6():
     print(f'time taken on Approx Haversine: {time_taken2}')
 
     print(f'ApproxHaversine is {time_taken/time_taken2} times faster than Haversine')
+
+test4()

@@ -915,15 +915,22 @@ def b4(): # getting drivers to drive to predetermined hotspots. Since we don't h
       if waitingDriverList and not waitingPassengerList:
         numDrivers = math.floor(global_data.percentOfIdleDriversThatGoToHotspots*len(waitingDriverList))
         i = 0
-        while i < numDrivers or i >= len(waitingDriverList):
+        while i < len(waitingDriverList):
           currDriver = waitingDriverList[i]
-          if getApproxHaversineDist((float(currDriver.lat), float(currDriver.long)), cluster.clusterPoint) < 10:
-            waitingDriverList.remove(currDriver)
+          closestHotspot = global_data.hotspotPoints[0]
+          minDist = float('inf')
+          for h in global_data.hotspotPoints:
+            dist = getApproxHaversineDist((float(currDriver.lat), float(currDriver.long)), h)
+            if dist < minDist:
+              minDist = dist
+              closestHotspot = h
+          if getApproxHaversineDist((float(currDriver.lat), float(currDriver.long)), closestHotspot) > 0.2:
+            cluster.driverList.remove(currDriver)
             driverNode = grabOrCreateSexyNodeT5((currDriver.lat, currDriver.long))
-            destNode = grabOrCreateSexyNodeT5(cluster.clusterPoint)
+            destNode = grabOrCreateSexyNodeT5(closestHotspot)
             dist =  Astar(getAdjacencyList(currDriver.datetime), driverNode, destNode, currDriver.datetime)
-            currDriver.lat = cluster.clusterPoint[0]
-            currDriver.long = cluster.clusterPoint[1]
+            currDriver.lat = closestHotspot[0]
+            currDriver.long = closestHotspot[1]
             currDriver.timeOnJob += dist 
             dateInMin = (currDriver.datetimeAsDatetime().timestamp() / 60) + dist
             #date conversion stuff
