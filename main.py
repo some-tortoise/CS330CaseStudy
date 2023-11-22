@@ -6,15 +6,12 @@ import heapq
 import time
 import statistics
 
-import cProfile   #REMOVE BEFORE SUBMISSION
-import pstats #REMOVE BEFORE SUBMISSION
-
 
 ###self defined files###
 from in_out import * #input output
 from algs import * #algorithms
 from util import * #utility functions
-from tasks import t1, t2, t3, t4, t5, t5Clusters #task functions
+from tasks import t1, t2, t3, t4, t5, t5Clusters, b1, b4 #task functions
 from classes import Driver, Passenger #classes for driver, passenger
 import global_data
 
@@ -72,38 +69,38 @@ print(f'Time for preprocessing: {time3 - time2} seconds')
 # Run the profiler (REMOVE BEFORE SUBMISSION)
 #cProfile.run('t4()', sort='cumulative')
 
-def profiler(command, filename="profile.stats", n_stats=10):
-    """Profiler for a python program
+# def profiler(command, filename="profile.stats", n_stats=10):
+#     """Profiler for a python program
 
-    Runs cProfile and outputs ordered statistics that describe
-    how often and for how long various parts of the program are executed.
+#     Runs cProfile and outputs ordered statistics that describe
+#     how often and for how long various parts of the program are executed.
 
-    Stats can be visualized with `!snakeviz profile.stats`.
+#     Stats can be visualized with `!snakeviz profile.stats`.
 
-    Parameters
-    ----------
-    command: str
-        Command string to be executed.
-    filename: str
-        Name under which to store the stats.
-    n_stats: int or None
-        Number of top stats to show.
-    """
-    import cProfile
-    import pstats
+#     Parameters
+#     ----------
+#     command: str
+#         Command string to be executed.
+#     filename: str
+#         Name under which to store the stats.
+#     n_stats: int or None
+#         Number of top stats to show.
+#     """
+#     import cProfile
+#     import pstats
 
-    cProfile.run(command, filename)
-    stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
-    return stats.print_stats(n_stats or {})
+#     cProfile.run(command, filename)
+#     stats = pstats.Stats(filename).strip_dirs().sort_stats("time")
+#     return stats.print_stats(n_stats or {})
 
-profiler('t5Clusters()', filename='profile.stats', n_stats=30)
+# profiler('t5Clusters()', filename='profile.stats', n_stats=30)
 
 
 
 #t1()
 #t2()
 #t3()
-#t4()
+t4()
 #t5()
 #t5Clusters()
 

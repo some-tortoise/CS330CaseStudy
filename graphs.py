@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import statistics 
 
 
-TASK = 't4'
+TASK = 't1'
 
 with open(f"{TASK}_results.txt", 'r') as file:
     # Read the entire content of the file
